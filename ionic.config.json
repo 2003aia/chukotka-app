@@ -1,0 +1,7 @@
+{
+  "name": "chukotka",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
