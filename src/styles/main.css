@@ -1,0 +1,137 @@
+.container {
+    padding: 15px;
+    background: #FFF;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+h1 {
+    color: #232323;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 450;
+    line-height: normal;
+    margin-bottom: 40px;
+}
+
+p {
+    color: #232323;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    /* 19.6px */
+}
+
+.btn {
+    border-radius: 25px;
+    background: #005D9F;
+    padding: 10px;
+    text-align: center;
+    color: #FFF;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform:unset;
+
+}
+
+.btn-clear {
+    border-radius: 25px;
+    padding: 10px;
+    text-align: center;
+    color: #232323;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 450;
+    line-height: normal;
+    text-transform:unset;
+
+}
+
+.btn-outline {
+    border-radius: 25px;
+    padding: 10px;
+    text-align: center;
+    color: #005D9F;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 450;
+    border: 1px solid #005D9F;
+    text-transform:unset;
+    --padding-top: 0px;
+    --padding-bottom: 0;
+}
+
+.btn-link {
+    align-self: flex-start;
+    margin-top: 20px;
+    --padding-start: 0;
+}
+
+.input {
+    padding: 30px 0 15px 0;
+    border: none;
+    border-bottom: 1px solid #ABA8A8;
+
+}
+
+.input::placeholder {
+    color: #ABA8A8;
+}
+
+.input:focus {
+    outline: none;
+}
+
+.check {
+    margin-top: 25px;
+    padding-bottom: 130px;
+}
+
+ion-checkbox {
+    --size: 28px;
+    --checkmark-width: 2px;
+    margin-right: 10px;
+}
+
+ion-item {
+    --padding-start: 0;
+}
+
+
+ion-checkbox::part(container) {
+    border-radius: 50%;
+    border: 2px solid #232323;
+    padding: 4px;
+}
+
+ion-header::part(container) {
+    border: 2px solid #232323;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px 0 0;
+  }
+
+
+.btn-back {
+    margin-right: auto;
+    --padding-start: 0;
+    margin-bottom: 50px;
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+
+}
+
+.red {
+    color: #F00;
+}
