@@ -7,8 +7,12 @@ http://ionicframework.com/docs/theming/ */
 }
 
 @font-face {
-  font-family: AvenirNextCyr-Light;
+  font-family: AppFont-Light;
   src: url("../assets/fonts/AvenirNextCyr-Light.ttf");
+}
+@font-face {
+  font-family: AppFont-Bold;
+  src: url("../assets/fonts/AvenirNextCyr-Demi.ttf");
 }
 
 /** Ionic CSS Variables **/

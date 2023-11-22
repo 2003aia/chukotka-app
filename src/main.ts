@@ -25,7 +25,9 @@ import './theme/variables.css';
 import './styles/main.css';
 
 
-const app = createApp(App)
+import Vue3Lottie from 'vue3-lottie'
+
+const app = createApp(App).use(Vue3Lottie)
   .use(IonicVue)
   .use(router);
   

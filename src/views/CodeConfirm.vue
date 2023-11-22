@@ -3,9 +3,9 @@
 
     <ion-content :fullscreen="true">
       <div class="container">
-        <ion-button fill="clear" class="btn-back" router-link="/reg">
+        <button class="btn-back" @click="this.$router.push('/reg')">
           <img src="../assets/back.svg" alt="back" />
-        </ion-button>
+        </button>
         <ion-text>
           <h1>Введите код</h1>
         </ion-text>
@@ -18,28 +18,27 @@
 
         <div class="input-otp">
           <input id="first" v-on:keyup="(e) => clickEvent(e, 'sec')" placeholder="1" max="1" type="number" class="input">
-          <input id="sec" v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="number" class="input">
+          <input id="sec" v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="number"
+            class="input">
           <input id="third" v-on:keyup="(e) => clickEvent(e, 'fourth')" placeholder="1" maxlength="1" type="number"
             class="input">
           <input id="fourth" placeholder="1" maxlength="1" type="number" class="input">
         </div>
-
-
-
-        <div class="btns">
-          <ion-button fill="clear" class="btn" router-link="/confirm">
-            Далее
-          </ion-button>
-        </div>
-
       </div>
 
     </ion-content>
+    <ion-footer class="ion-no-border">
+      <div class="btns container">
+        <button class="btn" @click="this.$router.push('/confirm')">
+          Далее
+        </button>
+      </div>
+    </ion-footer>
   </ion-page>
 </template>
   
 <script lang="ts">
-import { IonPage, IonInput, IonContent, IonImg, IonItem, IonButton, IonTitle, IonText } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonFooter } from '@ionic/vue';
 
 import { defineComponent } from 'vue';
 
@@ -47,13 +46,13 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'CodeConfirm',
   components: {
-    IonPage, IonInput, IonContent, IonImg, IonItem, IonButton, IonTitle, IonText
+    IonPage, IonContent, IonText, IonFooter
   },
   methods: {
     backFnc() {
       this.$router.go(-1)
     },
-    clickEvent:function (first: any, last: any) {
+    clickEvent: function (first: any, last: any) {
       if (first?.target.value.length) {
         console.log(last)
         document.getElementById(last)?.focus()
@@ -61,7 +60,7 @@ export default defineComponent({
     }
   },
   setup() {
-   
+
     return {
     }
   }

@@ -30,17 +30,17 @@
               <img class="menu-icon" src="../assets/indices.svg" slot="start" />
               <ion-label>Начисление и оплата </ion-label>
             </ion-item>
-            <ion-item class="menu-item">
+            <ion-item class="menu-item" router-link="/tabs/services">
               <img class="menu-icon" src="../assets/docs.svg" slot="start" />
 
               <ion-label>Сервисы </ion-label>
             </ion-item>
-            <ion-item class="menu-item">
+            <ion-item class="menu-item" router-link="/tabs/notif">
               <img class="menu-icon" src="../assets/notif.svg" slot="start" />
 
               <ion-label>Уведомление</ion-label>
             </ion-item>
-            <ion-item class="menu-item">
+            <ion-item class="menu-item" router-link="/tabs/profile">
               <img class="menu-icon" src="../assets/profile.svg" slot="start" />
 
               <ion-label>Профиль</ion-label>
@@ -56,11 +56,7 @@
             </ion-text>
           </ion-item>
 
-          <ion-text>
-            <span class="version">
-              Версия приложения 0.0.1
-            </span>
-          </ion-text>
+
         </div>
         <ion-modal :is-open="isOpen" mode="ios" :presenting-element="presentingElement">
           <ion-content>
@@ -70,7 +66,7 @@
                   <p class="modal-text">Вы точно хотите
                     выйти из аккаунта</p>
                 </ion-text>
-                  <img @click="setOpen(false)" aria-hidden="true" src="../assets/close.svg" alt="close">
+                <img @click="setOpen(false)" aria-hidden="true" src="../assets/close.svg" alt="close">
 
 
                 <!-- <ion-button @click="setOpen(false)" class="close" size="small" shape="round" fill="clear"
@@ -79,8 +75,8 @@
                 </ion-button> -->
               </div>
               <div class="modal-footer">
-                <ion-button class="btn" fill="clear" @click="(e) => logout(e)">Да</ion-button>
-                <ion-button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</ion-button>
+                <button class="btn" fill="clear" @click="(e) => logout(e)">Да</button>
+                <button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</button>
               </div>
 
             </div>
@@ -88,9 +84,19 @@
 
         </ion-modal>
       </ion-content>
+      <ion-footer class="ion-no-border">
+        <div class="container">
+          <ion-text>
+            <span class="version">
+              Версия приложения 0.0.1
+            </span>
+          </ion-text>
+        </div>
+
+      </ion-footer>
     </ion-menu>
     <ion-page id="main-content">
-      <ion-header class="ion-no-border">
+      <!-- <ion-header class="ion-no-border">
         <ion-toolbar>
           <div class="header-wrapper">
             <ion-buttons slot="start">
@@ -106,22 +112,26 @@
           </div>
 
         </ion-toolbar>
-      </ion-header>
+      </ion-header> -->
       <ion-tabs @ionTabsDidChange="afterTabChange">
         <ion-router-outlet></ion-router-outlet>
-        <ion-tab-bar slot="bottom">
+
+        <ion-tab-bar slot="bottom" class="tabs-wrapper">
+
           <ion-tab-button tab="tab1" href="/tabs/main">
 
 
-            <img class="tab-icon" :src="selected == 'tab1' ? $image('assets/home-active.svg') : $image('assets/home.svg')" />
+            <img class="tab-icon"
+              :src="selected == 'tab1' ? $image('assets/home-active.svg') : $image('assets/home.svg')" />
 
             <ion-label>
               <span class="tab-text">Главная</span>
             </ion-label>
           </ion-tab-button>
 
-          <ion-tab-button tab="tab2" href="/tabs/payment">
-            <img class="tab-icon" :src="selected == 'tab2' ? $image('assets/pay-active.svg') : $image('assets/pay.svg')" />
+          <ion-tab-button tab="tab2" href="/tabs/payment" @click="$router.push({path: '/tabs/payment', query: {name: 'Оплатить'}})">
+            <img class="tab-icon"
+              :src="selected == 'tab2' ? $image('assets/pay-active.svg') : $image('assets/pay.svg')" />
 
             <ion-label>
               <span class="tab-text">Оплатить</span>
@@ -129,7 +139,8 @@
           </ion-tab-button>
 
           <ion-tab-button tab="tab3" href="/tabs/indices">
-            <img class="tab-icon" :src="selected == 'tab3' ? $image('assets/indices2-active.svg') : $image('assets/indices2.svg')" />
+            <img class="tab-icon"
+              :src="selected == 'tab3' ? $image('assets/indices2-active.svg') : $image('assets/indices2.svg')" />
 
             <ion-label>
               <span class="tab-text">Показания</span>
@@ -143,14 +154,16 @@
               <span class="tab-text">Профиль</span>
             </ion-label>
           </ion-tab-button>
+
         </ion-tab-bar>
+
       </ion-tabs>
     </ion-page>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonMenuToggle, IonButton, IonImg, IonText, IonList, IonItem, IonModal } from '@ionic/vue';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonMenuToggle, IonButton, IonImg, IonText, IonList, IonItem, IonModal, IonFooter } from '@ionic/vue';
 import { closeOutline, addOutline, } from 'ionicons/icons';
 import { defineComponent } from 'vue';
 import { ref } from 'vue';
@@ -159,7 +172,7 @@ import { useRouter } from "vue-router";
 export default defineComponent({
   name: 'TabsPage',
   components: {
-    IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonMenuToggle, IonButton, IonImg, IonText, IonList, IonItem, IonModal
+    IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonMenuToggle, IonButton, IonImg, IonText, IonList, IonItem, IonModal, IonFooter
   },
   data() {
     return {
@@ -218,8 +231,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-
 .menu-header {
   margin-top: 40px;
   display: flex;
@@ -280,6 +291,7 @@ ion-header {
 }
 
 .modal-header {
+justify-content: space-between;
   display: flex;
 }
 
@@ -290,21 +302,18 @@ ion-header {
   margin-top: 40px;
 }
 
-.btn-outline {
-  margin-top: 15px;
-}
+
 
 .modal-text {
   font-size: 18px;
   font-style: normal;
   font-weight: 450;
+  margin-bottom: 0;
 }
 
-.modal-footer .btn {
-  padding: 5px;
-}
-
-.modal-footer .btn-outline {
-  padding: 5px;
+.tabs-wrapper {
+  border-radius: 20px 20px 0px 0px;
+  background: #FFF;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.25);
 }
 </style>

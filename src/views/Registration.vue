@@ -1,57 +1,77 @@
 <template>
-    <ion-page>
-      
-      <ion-content :fullscreen="true">
-        <div class="container">
-            <ion-button fill="clear" class="btn-back" router-link="/auth">
-              <img src="../assets/back.svg" alt="back"/> 
-            </ion-button>
-            <ion-text>
-                <h1>Регистрация</h1>
-            </ion-text>   
-          <input class="input" placeholder="Лицевой счет" />
-          <input class="input" placeholder="E-mail" />
-          <input class="input" placeholder="Телефон" />
+  <ion-page>
 
-          <input class="input" placeholder="Пароль" type="password"/>
-        
-          <ion-item lines="none" class="check">
-            <ion-checkbox  slot="start"></ion-checkbox>
-            <ion-text>
-                <p>Я принимаю условия пользовательского соглашения</p>
-            </ion-text>
-          </ion-item>
-
-        
-
-          <div class="btns">
-            <ion-button fill="clear" class="btn" router-link="/codeConfirm">Зарегистрироваться</ion-button>
-
+    <ion-content :fullscreen="true">
+      <div class="container">
+        <button class="btn-back" @click="$router.push('/auth')">
+          <img src="../assets/back.svg" alt="back" />
+        </button>
+        <ion-text>
+          <h1>Регистрация</h1>
+        </ion-text>
+        <input class="input" placeholder="Лицевой счет" />
+        <input class="input" placeholder="E-mail" />
+        <input class="input" placeholder="Телефон" />
+        <div class="input-wrapper">
+          <input class="input" ref="passReg" placeholder="Пароль" type="password" />
+          <div @click="passToggle">
+            <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
+            <img v-show="pass == false" src="../assets/pass-open.svg" alt="pen">
           </div>
-
-
         </div>
+        <div class="radio">
+          <input id="policy" type="radio" name="policy" value="policy">
+          <label for="policy">
+            <span></span>
+            <p>Я принимаю условия пользовательского соглашения</p>
+          </label>
+        </div>
+      </div>
 
-      </ion-content>
-    </ion-page>
-  </template>
+    </ion-content>
+    <ion-footer class="ion-no-border">
+      <div class="btns container">
+        <button class="btn" @click="$router.push('/codeConfirm')">Зарегистрироваться</button>
+      </div>
+    </ion-footer>
+  </ion-page>
+</template>
   
-  <script setup lang="ts">
-  import { IonPage, IonContent, IonImg, IonItem, IonButton, IonCheckbox, IonText } from '@ionic/vue';
+<script lang="ts">
+import { IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter } from '@ionic/vue';
 
-  import { defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 
-  defineComponent({
-    name: 'Registration',
+export default defineComponent({
+  name: 'Registration',
+  components: {
+    IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter
+  },
+  data() {
+    return {
+      pass: false,
+    }
+  },
+  methods: {
+    passToggle() {
+      var x = this.$refs.passReg
+      if (x?.type === "password") {
+        x.type = "text";
+        this.$data.pass = true
+      } else {
+        x.type = "password";
+        this.$data.pass = false
 
-    
-  });
-  </script>
+      }
+    }
+  },
+});
+</script>
 
 
 <style scoped>
-
-
-  
+p {
+  margin-bottom: 0;
+}
 </style>
   

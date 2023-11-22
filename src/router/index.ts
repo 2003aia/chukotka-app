@@ -65,7 +65,31 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Профиль',
         component: () => import('@/views/Profile.vue')
       },
-
+      {
+        path: 'addAcc',
+        component: () => import('@/views/AddAccount.vue')
+      },
+      {
+        path: 'profileEdit',
+        name: 'ProfileEdit',
+        component: () => import('@/views/ProfileEdit.vue')
+      },
+      {
+        path: 'services',
+        component: () => import('@/views/Services.vue')
+      },
+      {
+        path: 'notif',
+        component: () => import('@/views/Notifications.vue')
+      },
+      {
+        path: 'feedback',
+        component: () => import('@/views/Feedback.vue')
+      },
+      {
+        path: 'feedbackAdd',
+        component: () => import('@/views/FeedbackAdd.vue')
+      },
     ]
   }
 ]

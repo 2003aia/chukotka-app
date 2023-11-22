@@ -1,9 +1,27 @@
 .container {
-    padding: 15px;
+    padding: 25px 15px 15px 15px;
     background: #FFF;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    max-width: 500px;
+    margin: auto;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 0 0;
+    margin: 0 15px;
+    border-bottom: 1px solid #E4F1FF;
+}
+
+.header-wrapper .title {
+    font-size: 18px;
+    color: #232323;
+    width: 70%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
 }
 
 h1 {
@@ -21,54 +39,185 @@ p {
     font-style: normal;
     font-weight: 400;
     line-height: 140%;
+    margin-top: 0;
     /* 19.6px */
 }
 
 .btn {
     border-radius: 25px;
     background: #005D9F;
-    padding: 10px;
+    padding: 14px;
     text-align: center;
     color: #FFF;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    text-transform:unset;
-
+    font-family: AppFont-Light;
+    text-transform: unset;
+    margin-bottom: 16px;
 }
 
 .btn-clear {
     border-radius: 25px;
-    padding: 10px;
+    padding: 14px;
     text-align: center;
     color: #232323;
     font-size: 16px;
     font-style: normal;
     font-weight: 450;
     line-height: normal;
-    text-transform:unset;
+    text-transform: unset;
+    background: #ffffff00;
 
 }
 
 .btn-outline {
     border-radius: 25px;
-    padding: 10px;
+    padding: 14px;
     text-align: center;
     color: #005D9F;
     font-size: 16px;
     font-style: normal;
     font-weight: 450;
     border: 1px solid #005D9F;
-    text-transform:unset;
-    --padding-top: 0px;
-    --padding-bottom: 0;
+    text-transform: unset;
+    background: #ffffff00;
+}
+
+.btn-outline.black {
+    border: 1px solid #232323;
+    color: #232323;
+
 }
 
 .btn-link {
     align-self: flex-start;
     margin-top: 20px;
-    --padding-start: 0;
+    color: #005D9F;
+    font-size: 14px;
+    background: #FFF;
+}
+
+.card {
+    border-radius: 8px;
+    background: #F4F8FC;
+    padding: 15px;
+    margin-bottom: 24px;
+}
+
+.card-line {
+    border-bottom: 1px solid #E4F1FF;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+
+.card-line .value {
+    margin-bottom: 0;
+}
+
+.card-line .name {
+    margin-top: 0;
+}
+
+.card.acc-info .card-line:last-child {
+    border-bottom: none;
+}
+
+.card .card-line:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.card-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.card-item .name {
+    font-size: 14px;
+    color: #232323;
+    margin-bottom: 0;
+}
+
+.card-item .value {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.card-item:last-child {
+    margin-bottom: 10px;
+}
+
+.card-title {
+    color: #232323;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 450;
+    line-height: normal;
+    font-family: AppFont-Bold;
+    border-bottom: 1px solid #E4F1FF;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.card .total {
+    border-top: 1px solid #E4F1FF;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.card .total .name {
+    font-size: 14px;
+    font-family: AppFont-Bold;
+    color: #232323;
+    margin-bottom: 0;
+}
+
+.card .total .value {
+    font-size: 14px;
+    font-family: AppFont-Bold;
+    color: #232323;
+    margin-bottom: 0;
+}
+
+.name {
+    color: #6D6D6D;
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.value {
+    color: #232323;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+.bold {
+    font-family: AppFont-Bold;
+}
+
+.card.accordion {
+    border-bottom: 1px solid #E4F1FF;
+    margin-bottom: 10px;
+}
+
+.accordion-title {
+    color: #232323;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 450;
+    line-height: normal;
 }
 
 .input {
@@ -86,19 +235,85 @@ p {
     outline: none;
 }
 
-.check {
-    margin-top: 25px;
-    padding-bottom: 130px;
+.input-wrapper {
+    position: relative;
 }
 
-ion-checkbox {
+.input-wrapper .input {
+    position: relative;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.input-wrapper img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 30px;
+    z-index: 100;
+}
+
+
+.input-wrapper .pass-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 30px;
+    z-index: 100;
+}
+
+.radio{
+    width: 100%;
+}
+.radio label {
+    display: flex;
+align-items: center;
+position: relative;
+}
+input[type='radio'] {
+    display: none;
+}
+
+label:before {
+    content: " ";
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    margin: 0 10px 0 0;
+    width: 25px;
+    height: 25px;
+    min-width: 25px;
+    border-radius: 50%;
+    border: 2px solid #232323;
+    background-color: transparent;
+}
+
+input[type='radio']:checked+label::before{
+    border: 2px solid #F08400;
+
+}
+input[type='radio']:checked+label span {
+    position: absolute;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    /* top: 0px; */
+    left: 6.5px;
+    content: " ";
+    display: inline-block;
+    background-color: #F08400;
+    
+}
+
+/* ion-checkbox {
     --size: 28px;
     --checkmark-width: 2px;
     margin-right: 10px;
-}
+} */
 
 ion-item {
     --padding-start: 0;
+    background: rgba(0, 93, 159, 0);
 }
 
 
@@ -112,26 +327,113 @@ ion-header::part(container) {
     border: 2px solid #232323;
 }
 
-.header-wrapper {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 15px 0 0;
-  }
+ion-buttons {
+    --padding-start: 0;
+    --innder-padding-start: 0;
+}
+
+ion-menu-button {
+    --padding-start: 0;
+    --innder-padding-start: 0;
+    --padding-end: 0;
+    width: 30px;
+}
+
+ion-title {
+    --padding-start: 0;
+    --inner-padding-start: 0;
+    padding-left: 15px;
+}
 
 
 .btn-back {
     margin-right: auto;
-    --padding-start: 0;
     margin-bottom: 50px;
+    background: #FFF;
 }
 
 .btns {
     display: flex;
     flex-direction: column;
-    margin-top: auto;
-
 }
 
 .red {
     color: #F00;
+}
+
+.line {
+    height: 1px;
+    width: auto;
+    background-color: #E4F1FF;
+    margin-bottom: 24px;
+}
+
+
+/* card input */
+.card-input .title {
+    margin-bottom: 10px;
+}
+
+.card-input .subtitle {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.card-input input {
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+
+    border-bottom: 1px solid #8CC3EA;
+    background: #FFF;
+    padding: 15px;
+}
+
+.card-input input:focus {
+    outline: none;
+}
+
+.card-input:placeholder-shown {
+    color: #ABA8A8;
+    font-size: 14px;
+}
+
+/* Лицевые счет */
+.acc-title {
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.acc-list {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    margin-bottom: 25px;
+}
+
+.acc-item {
+    border-radius: 24px;
+    border: 1px solid #232323;
+    width: fit-content;
+    white-space: nowrap;
+    padding: 12px 24px;
+    color: #232323;
+    font-family: AppFont;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-right: 15px;
+}
+
+.acc-item.active {
+    border-radius: 24px;
+    background: #005D9F;
+    color: #FFF;
+    font-family: AppFont-Light;
+    border: none;
+}
+
+.acc-item:last-child {
+    margin-right: 0;
 }
