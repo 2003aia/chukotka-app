@@ -17,12 +17,12 @@
         </ion-text>
 
         <div class="input-otp">
-          <input id="first" v-on:keyup="(e) => clickEvent(e, 'sec')" placeholder="1" max="1" type="number" class="input">
-          <input id="sec" v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="number"
+          <input id="first" required v-on:keyup="(e) => clickEvent(e, 'sec')" placeholder="1" max="1" type="number" class="input">
+          <input id="sec" required v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="number"
             class="input">
-          <input id="third" v-on:keyup="(e) => clickEvent(e, 'fourth')" placeholder="1" maxlength="1" type="number"
+          <input id="third" required v-on:keyup="(e) => clickEvent(e, 'fourth')" placeholder="1" maxlength="1" type="number"
             class="input">
-          <input id="fourth" placeholder="1" maxlength="1" type="number" class="input">
+          <input id="fourth" required placeholder="1" maxlength="1" type="number" class="input">
         </div>
       </div>
 
@@ -86,10 +86,19 @@ export default defineComponent({
   font-size: 22px;
   background-color: #F2F9FF;
   border-radius: 5px;
-  border: 1px solid red;
   border: none;
 }
-
+.input-otp input::placeholder{
+  font-size: 22px;
+}
+.input-otp input:focus{
+  border: 1px solid #005D9F;
+  caret-color: #005D9F;
+}
+.input-otp input:not(:valid) {
+  border-color: 1px solid #F00 !important;
+  /* caret-color: #F00; */
+}
 .input-otp input:last-child {
   margin-right: 0;
 }

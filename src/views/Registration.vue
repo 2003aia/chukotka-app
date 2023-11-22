@@ -9,11 +9,21 @@
         <ion-text>
           <h1>Регистрация</h1>
         </ion-text>
-        <input class="input" placeholder="Лицевой счет" />
-        <input class="input" placeholder="E-mail" />
-        <input class="input" placeholder="Телефон" />
         <div class="input-wrapper">
-          <input class="input" ref="passReg" placeholder="Пароль" type="password" />
+          <input class="input" required />
+          <label>Лицевой счет</label>
+        </div>
+        <div class="input-wrapper">
+          <input class="input" required />
+          <label>E-mail</label>
+        </div>
+        <div class="input-wrapper">
+          <input class="input" required />
+          <label>Телефон</label>
+        </div>
+        <div class="input-wrapper">
+          <input class="input" ref="passReg" required type="password" />
+          <label>Пароль</label>
           <div @click="passToggle">
             <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
             <img v-show="pass == false" src="../assets/pass-open.svg" alt="pen">
@@ -21,9 +31,9 @@
         </div>
         <div class="radio">
           <input id="policy" type="radio" name="policy" value="policy">
-          <label for="policy">
+          <label class="label" for="policy">
             <span></span>
-            <p>Я принимаю условия пользовательского соглашения</p>
+            <p>Я принимаю условия <a class="link">пользовательского соглашения</a></p>
           </label>
         </div>
       </div>

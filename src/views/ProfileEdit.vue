@@ -23,7 +23,8 @@
                     <p class="title">ФИО</p>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" placeholder="ФИО" value="Иванов Иван Иванович" />
+                    <input class="input" required value="Иванов Иван Иванович" />
+                    <label>ФИО</label>
                     <img src="../assets/pen.svg" alt="pen">
                 </div>
             </div>
@@ -32,7 +33,9 @@
                     <p class="title">Адрес</p>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" placeholder="Адрес" value="г Анадырь ул. Куркутского, д. 34" />
+                    <input class="input" required value="г Анадырь ул. Куркутского, д. 34" />
+                    <label>Адрес</label>
+
                     <img  src="../assets/pen.svg" alt="pen">
                 </div>
             </div>
@@ -41,7 +44,9 @@
                     <p class="title">Электронная почта</p>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" placeholder="Электронная почта" value="Doc@chukotka@gmail.com" />
+                    <input class="input" required value="Doc@chukotka@gmail.com" />
+                    <label>Электронная почта</label>
+
                     <img  src="../assets/pen.svg" alt="pen">
                 </div>
                 <ion-text>
@@ -54,7 +59,9 @@
                     <p class="title">Телефон</p>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" placeholder="Телефон" value="8 (999) 123-45-67" />
+                    <input class="input" required value="8 (999) 123-45-67" />
+                    <label>Телефон</label>
+
                     <img src="../assets/pen.svg" alt="pen">
                 </div>
                 <ion-text>
@@ -67,12 +74,11 @@
                     <p class="title">Изменить пароль</p>
                 </ion-text>
                 <ion-text>
-                    <p style="margin-bottom: 10px;">
-                        Введите старый пароль
-                    </p>
+                    
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" ref="passOld" placeholder="Введите старый пароль" value="123456" type="password" />
+                    <input class="input" ref="passOld" required value="123456" type="password" />
+                    <label>Введите старый пароль</label>
                     <div @click="passToggle('passOld')">
                         <img v-show="pass.passOld == true" src="../assets/pass-close.svg" alt="pen">
                         <img v-show="pass.passOld == false" src="../assets/pass-open.svg" alt="pen">
@@ -80,12 +86,11 @@
                     </div>
                 </div>
                 <ion-text>
-                    <p style="margin-bottom: 10px;">
-                        Введите старый пароль
-                    </p>
+                   
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" ref="passNew" placeholder="Введите новый пароль" value="123456" type="password" />
+                    <input class="input" ref="passNew" required value="123456" type="password" />
+                    <label>Введите новый пароль</label>
                     <div @click="passToggle('passNew')">
 
                         <img v-show="pass.passNew == true" src="../assets/pass-close.svg" alt="pen">

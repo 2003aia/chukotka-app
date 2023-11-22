@@ -5,12 +5,18 @@
       <div class="container auth">
 
         <img class="logo" src="../assets/logo.svg" alt="logo" />
-        <input class="input" placeholder="Лицевой счет" />
         <div class="input-wrapper">
-          <input class="input" ref="passAuth" placeholder="Пароль" type="password" />
+
+          <input class="input" required />
+          <label>Лицевой счет</label>
+        </div>
+
+        <div class="input-wrapper">
+          <input class="input" ref="passAuth" required type="password" />
+          <label>Пароль</label>
           <div @click="passToggle">
-            <img v-show="pass== true" src="../assets/pass-close.svg" alt="pen">
-            <img v-show="pass== false" src="../assets/pass-open.svg" alt="pen">
+            <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
+            <img v-show="pass == false" src="../assets/pass-open.svg" alt="pen">
           </div>
         </div>
         <button class="btn-link" @click="$router.push('/passwordRecovery')">

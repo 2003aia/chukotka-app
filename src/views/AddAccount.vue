@@ -9,13 +9,28 @@
                 <ion-text>
                     <h1>Добавить лицевой счет</h1>
                 </ion-text>
-                <input class="input" placeholder="Город/населенный пункт" />
-                <input class="input" placeholder="Улица" />
-                <div class="input-block">
-                    <input class="input" placeholder="Дом" />
-                    <input class="input" placeholder="Квартира" />
+                <div class="input-wrapper">
+                    <input class="input" required />
+                    <label>Город/населенный пункт</label>
                 </div>
-                <input class="input" placeholder="Номер лицевого счета" />
+                <div class="input-wrapper">
+                    <input class="input" required />
+                    <label>Улица</label>
+                </div>
+                <div class="input-block">
+                    <div class="input-wrapper">
+                        <input class="input" required />
+                        <label>Дом</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <input class="input" required />
+                        <label>Квартира</label>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <input class="input" required />
+                    <label>Номер лицевого счета</label>
+                </div>
 
 
             </div>
@@ -29,7 +44,8 @@
 
                 </ion-text>
                 <div class="happy">
-                    <img style="width: 140px;" src="https://s3-alpha-sig.figma.com/img/ed65/1709/60a6ead3b293eda67c7147eb539ffbe1?Expires=1701043200&Signature=ZggEf2NUNR6KXT0DjQDg1lMyVr9X18WsWvsLLIlemaqDUS2EOaY1B~qKmEfAGoscWsdCk55kScRvLiG4~4XW8RS8J8HCWE5J4kS1lKuOv~bymbwdykJ3924-dA0VCQMZkw-4VYIRDLx-zIUl4TxNzzxeLa1Sb3S8ERHVxM6kga3fDhsmwuaMJN6DfYlmO5v75cjjsGWTzPvatNtOMyy6jrV2W1ETsOf2A3xI4aVUBRlee5oP7NTBrQ7YIWuyInoUjmb1kr5gzlMwOH0eXR3UvhKr1V1WGdklYTcHxw6TeTmkeV4yBmyUhh~q3cjS6aaO-KHumdyNiu6PeA2LZP1~bQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
+                    <img style="width: 140px;"
+                        src="https://s3-alpha-sig.figma.com/img/ed65/1709/60a6ead3b293eda67c7147eb539ffbe1?Expires=1701043200&Signature=ZggEf2NUNR6KXT0DjQDg1lMyVr9X18WsWvsLLIlemaqDUS2EOaY1B~qKmEfAGoscWsdCk55kScRvLiG4~4XW8RS8J8HCWE5J4kS1lKuOv~bymbwdykJ3924-dA0VCQMZkw-4VYIRDLx-zIUl4TxNzzxeLa1Sb3S8ERHVxM6kga3fDhsmwuaMJN6DfYlmO5v75cjjsGWTzPvatNtOMyy6jrV2W1ETsOf2A3xI4aVUBRlee5oP7NTBrQ7YIWuyInoUjmb1kr5gzlMwOH0eXR3UvhKr1V1WGdklYTcHxw6TeTmkeV4yBmyUhh~q3cjS6aaO-KHumdyNiu6PeA2LZP1~bQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
                         alt="">
                 </div>
 
@@ -87,7 +103,7 @@ export default defineComponent({
     justify-content: space-between;
 }
 
-.input-block .input {
+.input-block .input-wrapper {
     width: 47%;
 }
 

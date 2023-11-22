@@ -33,11 +33,35 @@
 
 
                 </ion-text>
-
+                <div class="card">
+                    <div class="card-list">
+                        <div class="card-line">
+                            <p class="name">Лицевой счет</p>
+                            <p class="value">№ 12345678901</p>
+                        </div>
+                        <div class="card-line">
+                            <p class="name">ФИО</p>
+                            <p class="value">Иванов Иван Иванович</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <input class="input" placeholder="Личный кабинет" />
+                    <img src="../assets/pen.svg" alt="pen">
+                </div>
+                <div class="input-wrapper">
+                    <input class="input" type="text" required />
+                    <label>Сообщение</label>
+                </div>
+                
+                <div class="btns">
+                    <div class="btn">Отправить</div>
+                </div>
             </div>
 
 
         </ion-content>
+
 
         <ion-fab router-link="/tabs/feedbackAdd.vue" slot="fixed" vertical="bottom" horizontal="end">
             <ion-fab-button>
@@ -56,7 +80,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     name: 'FeedbackAdd',
     components: {
-        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonFab, IonFabButton
+        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonFab, IonFabButton,
     },
     data() {
         return {
@@ -112,9 +136,11 @@ export default defineComponent({
     font-family: AppFont-Bold;
     font-size: 16px;
 }
-ion-fab-button{
+
+ion-fab-button {
     --background: #F08400;
 }
+
 .header-wrapper {
     padding: 15px 0;
 }

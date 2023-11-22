@@ -89,7 +89,7 @@
               <p class="name">Тип</p>
               <p class="value">Частная</p>
             </div>
-            <div class="card-line">
+            <div class="card-line" style="margin-bottom: 30px;">
 
               <p class="name">С учетом оплаты текущего периода </p>
               <p class="value bold">Задолженность: 0.00</p>
@@ -97,8 +97,33 @@
           </div>
 
           <div class="btns">
-            <button class="btn">Передать показания</button>
-            <button class="btn-outline black">Удалить</button>
+            <button class="btn" @click="$router.push('/tabs/indices')">Передать показания</button>
+            <button class="btn-outline black" @click="setOpen(true)">Удалить</button>
+            <ion-modal :is-open="isOpen" mode="ios" :presenting-element="presentingElement">
+              <ion-content>
+                <div class="modal-wrapper">
+                  <div class="modal-header">
+                    <ion-text>
+                      <p class="modal-text">Вы точно хотите
+                        удалить Лицевой счет?</p>
+                    </ion-text>
+                    <img @click="setOpen(false)" aria-hidden="true" src="../assets/close.svg" alt="close">
+
+
+                    <!-- <ion-button @click="setOpen(false)" class="close" size="small" shape="round" fill="clear"
+                  aria-label="close">
+                  <ion-icon aria-hidden="true" size="large" :icon="closeOutline"></ion-icon>
+                </ion-button> -->
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn" fill="clear" @click="(e) => setOpen(false)">Да</button>
+                    <button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</button>
+                  </div>
+
+                </div>
+              </ion-content>
+
+            </ion-modal>
           </div>
         </div>
 
@@ -147,15 +172,33 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonModal } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { useRouter } from "vue-router";
 
 
 export default defineComponent({
   name: 'Main',
   components: {
-    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, ExploreContainer, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, ExploreContainer, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonModal
+  },
+  setup() {
+    const router = useRouter()
+    const isOpen = ref(false);
+
+    const setOpen = (open: boolean) => {
+      isOpen.value = open
+    }
+    const remove = (e: any) => {
+      isOpen.value = false
+
+      router.push('/auth')
+
+    }
+    return {
+      setOpen, remove, isOpen,
+    }
   },
   data() {
     return {
