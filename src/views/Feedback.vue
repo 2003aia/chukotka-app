@@ -34,8 +34,34 @@
                     <p class="no-active">
                         Нет активных обращений
                     </p>
-                </ion-text>
 
+                </ion-text>
+                <div class="card">
+                    <ion-text>
+                        <div class="card-item">
+                            <p class="name orange">Обрабатывается</p>
+                            <p class="value">24.05.2023</p>
+                        </div>
+                        <p class="text">
+                            Уважаемый клиент!
+                            Мы ответили на ваш запрос
+                        </p>
+                        <a class="link">Подробнее</a>
+                    </ion-text>
+                </div>
+                <div class="card">
+                    <ion-text>
+                        <div class="card-item">
+                            <p class="name green">Ответ получен</p>
+                            <p class="value">24.05.2023</p>
+                        </div>
+                        <p class="text">
+                            Уважаемый клиент!
+                            Мы ответили на ваш запрос
+                        </p>
+                        <a class="link">Подробнее</a>
+                    </ion-text>
+                </div>
             </div>
 
 
@@ -103,6 +129,25 @@ export default defineComponent({
   
   
 <style scoped>
+.orange {
+    color: #F08400;
+}
+
+.green {
+    color: #21A300;
+}
+
+.card .value {
+    color: #6D6D6D;
+    font-size: 14px;
+}
+.card .text {
+    color: #232323;
+    font-family: AppFont-Bold;
+    font-size: 16px;
+    font-weight: 450;
+
+}
 .name-org {
     font-size: 20px;
     margin-bottom: 24px;
@@ -114,15 +159,16 @@ export default defineComponent({
     font-family: AppFont-Bold;
     font-size: 16px;
 }
-ion-fab-button{
+
+ion-fab-button {
     --background: #F08400;
 }
+
 .header-wrapper {
     padding: 15px 0;
 }
 
 .btn-back {
     margin-bottom: 0;
-}
-</style>
+}</style>
   

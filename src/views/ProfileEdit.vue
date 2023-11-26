@@ -20,7 +20,7 @@
         <ion-content :fullscreen="true">
             <div v-show="$route.query?.link == 'fio'" class="container">
                 <ion-text>
-                    <p class="title">ФИО</p>
+                    <p class="title-profile">ФИО</p>
                 </ion-text>
                 <div class="input-wrapper">
                     <input class="input" required value="Иванов Иван Иванович" />
@@ -30,7 +30,7 @@
             </div>
             <div v-show="$route.query?.link == 'address'" class="container">
                 <ion-text>
-                    <p class="title">Адрес</p>
+                    <p class="title-profile">Адрес</p>
                 </ion-text>
                 <div class="input-wrapper">
                     <input class="input" required value="г Анадырь ул. Куркутского, д. 34" />
@@ -41,7 +41,7 @@
             </div>
             <div v-show="$route.query?.link == 'email'" class="container">
                 <ion-text>
-                    <p class="title">Электронная почта</p>
+                    <p class="title-profile">Электронная почта</p>
                 </ion-text>
                 <div class="input-wrapper">
                     <input class="input" required value="Doc@chukotka@gmail.com" />
@@ -56,7 +56,7 @@
             </div>
             <div v-show="$route.query?.link == 'phone'" class="container">
                 <ion-text>
-                    <p class="title">Телефон</p>
+                    <p class="title-profile">Телефон</p>
                 </ion-text>
                 <div class="input-wrapper">
                     <input class="input" required value="8 (999) 123-45-67" />
@@ -71,7 +71,7 @@
             </div>
             <div v-show="$route.query?.link == 'password'" class="container">
                 <ion-text>
-                    <p class="title">Изменить пароль</p>
+                    <p class="title-profile">Изменить пароль</p>
                 </ion-text>
                 <ion-text>
                     
@@ -168,7 +168,7 @@ export default defineComponent({
   
   
 <style scoped>
-.title {
+.title-profile {
     font-size: 16px;
     margin-bottom: 24px;
     text-align: center;

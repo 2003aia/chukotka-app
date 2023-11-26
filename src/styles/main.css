@@ -110,6 +110,9 @@ p {
     padding: 15px;
     margin-bottom: 24px;
 }
+.card .link {
+    color: #005D9F;
+}
 
 .card-line {
     border-bottom: 1px solid #E4F1FF;
@@ -312,11 +315,14 @@ input:valid~label {
     z-index: 100;
 }
 
+/* radio  */
 .radio {
     width: 100%;
     margin-top: 10px;
 }
-
+.radio label p{
+    margin-bottom: 0;
+}
 .radio label {
     display: flex;
     align-items: center;
@@ -524,3 +530,217 @@ ion-title {
     font-weight: 450;
     margin-bottom: 0;
 }
+
+
+
+
+/* custom-select/// */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.custom-select[open] {
+    z-index: 1;
+
+}
+
+.custom-select .label {
+    font-size: 14px;
+    color: #ABA8A8;
+    padding: 30px 0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    transition: 0.2s ease-in-out all;
+    -moz-transition: 0.2s ease-in-out all;
+    -webkit-transition: 0.2s ease-in-out all;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.custom-select[open] .label {
+    font-size: 12px;
+    color: #005D9F;
+    top: 0px;
+    left: 0px;
+    opacity:initial;
+    padding: 0px 0px 0px 0px;
+}
+
+.custom-select summary {
+    padding: 30px 0 15px 0;
+    cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #ABA8A8;
+    font-size: 14px;
+    position: relative;
+}
+
+.custom-select summary::-webkit-details-marker {
+    display: none;
+}
+
+.custom-select summary .placeholder {
+    color: #ABA8A8;
+}
+
+.custom-select[open] summary:before {
+    content: '';
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.custom-select summary:after {
+    content: '';
+    display: inline-block;
+    float: right;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid #232323;
+    border-left: 2px solid #232323;
+    border-bottom-left-radius: 2px;
+    margin-right: 10px;
+    transform: rotate(315deg) translate(50%, 0%);
+    transform-origin: center center;
+    transition: transform ease-in-out 200ms;
+
+}
+
+.custom-select summary:focus {
+    outline: none;
+}
+
+.custom-select[open] summary:after {
+    transform: rotate(-225deg) translate(0%, 0%);
+}
+
+.custom-select ul {
+    width: 100%;
+    position: absolute;
+    top: calc(100% + .5rem);
+    left: 0;
+    padding: 0;
+    background-color: #fff;
+    margin: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    list-style-type: none;
+    counter-reset: labels;
+    border-bottom: 1px solid #ABA8A8;
+    padding: 15px 0;
+}
+
+.custom-select li {
+    margin: 0;
+    padding: 15px 0 0 0;
+}
+
+.custom-select li:first-child {
+    padding-top: 0;
+}
+
+
+/* FAKE SELECT */
+
+.custom-select summary.radios {
+    counter-reset: radios;
+}
+
+.custom-select summary.radios:before {
+    content: var(--selection);
+}
+
+.custom-select summary input[type=radio] {
+    counter-increment: radios;
+    appearance: none;
+    display: none;
+}
+
+.custom-select summary input[type=radio]:checked {
+    display: inline;
+    --display: block;
+}
+
+.custom-select summary input[type=radio]:after {
+    content: attr(title);
+    display: inline;
+    font-size: 1rem;
+}
+
+.custom-select ul label {
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #232323;
+    
+}
+
+
+
+/* date picker */
+.input-date-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.input-date {
+    border-bottom: 1px solid #ABA8A8;
+    padding: 11px 0 15px 0;
+    color: #232323;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 47%;
+}
+
+.date-picker {
+    max-width: 280px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.date-picker-header {
+    border-bottom: 1px solid #E4F1FF;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #005D9F;
+    font-size: 18px;
+    font-family: AppFont-Bold;
+}
+
+.date-picker .next {
+    margin-left: 15px;
+}
+
+.date-picker-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.date-picker-item {
+    border: 1px solid #E4F1FF;
+    padding: 13px 12px;
+    border-radius: 25px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #232323;
+    display: flex;
+    justify-content: center;
+    width: 33.3%;
+}
+

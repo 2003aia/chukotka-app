@@ -20,7 +20,7 @@
     <ion-content :fullscreen="true">
       <div class="container">
         <ion-text>
-          <p class="title">
+          <p class="title profile">
             Основная информация
           </p>
         </ion-text>
@@ -118,7 +118,7 @@ export default defineComponent({
   padding-top: 24px;
 }
 
-.title {
+.title.profile {
   color: #000;
   font-size: 16px;
   font-style: normal;

@@ -90,6 +90,18 @@ const routes: Array<RouteRecordRaw> = [
         path: 'feedbackAdd',
         component: () => import('@/views/FeedbackAdd.vue')
       },
+      {
+        path: 'accrualAndPayment',
+        component: () => import('@/views/AccrualAndPayment.vue')
+      },
+      {
+        path: 'receipt',
+        component: () => import('@/views/Receipt.vue')
+      },
+      {
+        path: 'downloadDocs',
+        component: () => import('@/views/DownloadDocs.vue')
+      },
     ]
   }
 ]

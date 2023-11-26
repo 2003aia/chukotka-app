@@ -99,7 +99,7 @@
           <div class="btns">
             <button class="btn" @click="$router.push('/tabs/indices')">Передать показания</button>
             <button class="btn-outline black" @click="setOpen(true)">Удалить</button>
-            <ion-modal :is-open="isOpen" mode="ios" :presenting-element="presentingElement">
+            <ion-modal :is-open="isOpen" mode="ios">
               <ion-content>
                 <div class="modal-wrapper">
                   <div class="modal-header">

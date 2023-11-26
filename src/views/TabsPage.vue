@@ -17,35 +17,39 @@
       </ion-toolbar>
       <ion-content>
         <div class="container">
-
           <ion-list lines="none">
-            <ion-item class="menu-item" router-link="/tabs/profile">
-              <img class="menu-icon" src="../assets/add.svg" slot="start" />
-
-              <ion-label>
-                Добавить лицевой счет
-              </ion-label>
-            </ion-item>
-            <ion-item class="menu-item">
-              <img class="menu-icon" src="../assets/indices.svg" slot="start" />
-              <ion-label>Начисление и оплата </ion-label>
-            </ion-item>
-            <ion-item class="menu-item" router-link="/tabs/services">
-              <img class="menu-icon" src="../assets/docs.svg" slot="start" />
-
-              <ion-label>Сервисы </ion-label>
-            </ion-item>
-            <ion-item class="menu-item" router-link="/tabs/notif">
-              <img class="menu-icon" src="../assets/notif.svg" slot="start" />
-
-              <ion-label>Уведомление</ion-label>
-            </ion-item>
-            <ion-item class="menu-item" router-link="/tabs/profile">
-              <img class="menu-icon" src="../assets/profile.svg" slot="start" />
-
-              <ion-label>Профиль</ion-label>
-            </ion-item>
-
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/addAcc">
+                <img class="menu-icon" src="../assets/add.svg" slot="start" />
+                <ion-label>
+                  Добавить лицевой счет
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/accrualAndPayment">
+                <img class="menu-icon" src="../assets/indices.svg" slot="start" />
+                <ion-label>Начисление и оплата </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/services">
+                <img class="menu-icon" src="../assets/docs.svg" slot="start" />
+                <ion-label>Сервисы </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/notif">
+                <img class="menu-icon" src="../assets/notif.svg" slot="start" />
+                <ion-label>Уведомление</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/profile">
+                <img class="menu-icon" src="../assets/profile.svg" slot="start" />
+                <ion-label>Профиль</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
           </ion-list>
 
 
@@ -75,7 +79,10 @@
                 </ion-button> -->
               </div>
               <div class="modal-footer">
-                <button class="btn" fill="clear" @click="(e) => logout(e)">Да</button>
+                <ion-menu-toggle>
+                  <button class="btn" style="width: 100%;" fill="clear" @click="(e) => logout(e)">Да</button>
+                </ion-menu-toggle>
+
                 <button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</button>
               </div>
 
@@ -129,7 +136,8 @@
             </ion-label>
           </ion-tab-button>
 
-          <ion-tab-button tab="tab2" href="/tabs/payment" @click="$router.push({path: '/tabs/payment', query: {name: 'Оплатить'}})">
+          <ion-tab-button tab="tab2" href="/tabs/payment"
+            @click="$router.push({ path: '/tabs/payment', query: { name: 'Оплатить' } })">
             <img class="tab-icon"
               :src="selected == 'tab2' ? $image('assets/pay-active.svg') : $image('assets/pay.svg')" />
 
@@ -280,35 +288,6 @@ ion-header {
 .tab-text {
   font-size: 12px;
   font-weight: 600;
-}
-
-.modal-wrapper {
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 15px;
-}
-
-.modal-header {
-justify-content: space-between;
-  display: flex;
-}
-
-.modal-footer {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  margin-top: 40px;
-}
-
-
-
-.modal-text {
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 450;
-  margin-bottom: 0;
 }
 
 .tabs-wrapper {

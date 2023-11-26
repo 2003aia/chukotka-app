@@ -3,9 +3,9 @@
         <ion-header class="ion-no-border">
             <ion-toolbar>
                 <div class="header-wrapper">
-                    <button class="btn-back" @click="$router.push('/tabs/profile')">
-                        <img src="../assets/back.svg" alt="back" />
-                    </button>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
                     <ion-title>
                         <span class="title">
                             Сервисы
@@ -20,14 +20,15 @@
         <ion-content :fullscreen="true">
             <div class="container">
                 <ion-list lines="none">
-                    <ion-item class="menu-item" @click="$router.push({path: '/tabs/payment', query: {name: 'Оплата услуг'}})">
+                    <ion-item class="menu-item"
+                        @click="$router.push({ path: '/tabs/payment', query: { name: 'Оплата услуг' } })">
                         <img class="menu-icon" src="../assets/pay-active.svg" slot="start" />
 
                         <ion-label>
                             Оплата услуг
                         </ion-label>
                     </ion-item>
-                    <ion-item class="menu-item">
+                    <ion-item class="menu-item" router-link="/tabs/receipt">
                         <img class="menu-icon" src="../assets/email.svg" slot="start" />
                         <ion-label>Электронная квитанция</ion-label>
                     </ion-item>
@@ -36,7 +37,7 @@
 
                         <ion-label>Передача показаний ПУ</ion-label>
                     </ion-item>
-                    <ion-item class="menu-item">
+                    <ion-item class="menu-item" router-link="/tabs/downloadDocs">
                         <img class="menu-icon" src="../assets/service-doc.svg" slot="start" />
 
                         <ion-label>Скачать документы</ion-label>
@@ -60,7 +61,7 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonLabel, IonItem, IonList, } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonLabel, IonItem, IonList } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 
@@ -85,16 +86,14 @@ export default defineComponent({
   
   
 <style scoped>
-
 .menu-item {
-  margin-bottom: 7px;
+    margin-bottom: 7px;
 }
+
 .menu-icon {
-  margin-right: 10px;
+    margin-right: 10px;
 }
-.header-wrapper {
-    padding: 15px 0;
-}
+
 
 .btn-back {
     margin-bottom: 0;

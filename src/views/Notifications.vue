@@ -12,7 +12,7 @@
                         </span>
                     </ion-title>
 
-                    <img src="../assets/bell.svg" alt="notification" class="notif">
+                    <!-- <img src="../assets/bell.svg" alt="notification" class="notif"> -->
                 </div>
 
             </ion-toolbar>
@@ -31,7 +31,7 @@
                             Уважаемые клиенты!
                             С 20 по 25 числа каждого месяца Вы...
                         </p>
-                        <button class="link">Подробнее</button>
+                        <a class="link">Подробнее</a>
                     </ion-text>
                 </div>
 
@@ -68,9 +68,7 @@ export default defineComponent({
 
 }
 
-.card .link {
-    color: #005D9F;
-}
+
 .card .value{
     color: #6D6D6D;
     font-size: 14px;

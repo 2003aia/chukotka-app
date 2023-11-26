@@ -45,15 +45,56 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-wrapper">
-                    <input class="input" placeholder="Личный кабинет" />
-                    <img src="../assets/pen.svg" alt="pen">
-                </div>
+
+                <details class="custom-select">
+                    <summary class="radios">
+                        <label class="label">Выберите тему обращения</label>
+
+                        <input class="placeholder" type="radio" name="item" id="default" title="Личный кабинет" checked>
+                        <input type="radio" name="item" id="item1" title="Тема 1">
+                        <input type="radio" name="item" id="item2" title="Тема 2">
+                        <input type="radio" name="item" id="item3" title="Тема 3">
+                        <input type="radio" name="item" id="item4" title="Тема 4">
+                    </summary>
+                    <ul class="list">
+                        <li>
+                            <label for="item1">
+                                Тема 1
+                            </label>
+                        </li>
+                        <li>
+                            <label for="item2">Тема 2</label>
+                        </li>
+                        <li>
+                            <label for="item3">Тема 3</label>
+                        </li>
+                        <li>
+                            <label for="item4">Тема 4</label>
+                        </li>
+
+                    </ul>
+                </details>
                 <div class="input-wrapper">
                     <input class="input" type="text" required />
                     <label>Сообщение</label>
                 </div>
-                
+
+                <div class="file">
+                    <p :class="file[0]?.name && 'black'">{{ file[0]?.name || 'Прикрепить файл' }}</p>
+                    <input @change="(e) => file = e.target?.files" id="files" class="input" type="file" required />
+                    <label v-show="file[0]?.name ? true : false" for="files2"><img @click="file = []"
+                            src="../assets/close.svg" alt="file"></label>
+
+                    <label v-show="file[0]?.name ? false : true" for="files"><img src="../assets/file.svg"
+                            alt="file"></label>
+                </div>
+                <div class="radio">
+                    <input id="policy2" type="radio" name="policy2" value="policy2">
+                    <label class="label" for="policy2">
+                        <span></span>
+                        <p>Даю согласие на обработку персональных данных</p>
+                    </label>
+                </div>
                 <div class="btns">
                     <div class="btn">Отправить</div>
                 </div>
@@ -63,16 +104,12 @@
         </ion-content>
 
 
-        <ion-fab router-link="/tabs/feedbackAdd.vue" slot="fixed" vertical="bottom" horizontal="end">
-            <ion-fab-button>
-                <img src="../assets/fab-add.svg" alt="">
-            </ion-fab-button>
-        </ion-fab>
+
     </ion-page>
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonFab, IonFabButton } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 
@@ -80,7 +117,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     name: 'FeedbackAdd',
     components: {
-        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonFab, IonFabButton,
+        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,
     },
     data() {
         return {
@@ -88,10 +125,14 @@ export default defineComponent({
                 passOld: false,
                 passNew: false,
             },
+            file: [],
         }
     },
     methods: {
-        passToggle(el) {
+        setFile(e: any) {
+            this.$data.file = e.target.files
+        },
+        passToggle(el: any) {
             if (el == 'passOld') {
                 var x = this.$refs.passOld
                 if (x?.type === "password") {
@@ -125,6 +166,49 @@ export default defineComponent({
   
   
 <style scoped>
+.radio {
+    margin-bottom: 30px;
+}
+
+.file {
+    position: relative;
+    padding: 20px 0 15px 0;
+    border: none;
+    border-bottom: 1px solid #ABA8A8;
+    margin-bottom: 25px;
+}
+
+.file input {
+    display: none;
+}
+
+.file p {
+    position: absolute;
+    margin: 0;
+    bottom: 15px;
+    font-size: 14px;
+    color: #ABA8A8;
+}
+
+.file label {
+    border: 0;
+    padding: 0px;
+    transition: .5s;
+    float: right;
+    margin-bottom: -5px;
+}
+
+.file .close {
+    position: relative;
+    z-index: 2000;
+    width: max-content;
+    height: max-content;
+}
+
+.black {
+    color: #232323 !important;
+}
+
 .name-org {
     font-size: 20px;
     margin-bottom: 24px;
@@ -148,5 +232,8 @@ ion-fab-button {
 .btn-back {
     margin-bottom: 0;
 }
+
+
+
 </style>
   
