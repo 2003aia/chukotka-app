@@ -7,7 +7,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     vue(),
-    legacy()
+    legacy(),
   ],
   resolve: {
     alias: {
@@ -17,5 +17,5 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom'
-  }
+  },
 })
