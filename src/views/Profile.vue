@@ -24,18 +24,20 @@
             Основная информация
           </p>
         </ion-text>
-        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'fio' } })">
+        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'fio', lastname: userData?.data?.lastname, name: userData?.data?.name, secondname: userData?.data?.secondname } })">
           <ion-text>
             <p class="name">
               ФИО
             </p>
             <p class="value">
-              Иванов Иван Иванович
+              {{ userData?.data?.lastname }}
+              {{ userData?.data?.name }}
+              {{ userData?.data?.secondname }}
             </p>
           </ion-text>
           <img src="../assets/next.svg" alt="go">
         </div>
-        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'address' } })">
+        <div v-show="false" class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'address' } })">
           <ion-text>
             <p class="name">
               Адрес
@@ -52,24 +54,24 @@
             Контактная информация
           </p>
         </ion-text>
-        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'email' } })">
+        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'email', email: userData?.data?.email } })">
           <ion-text>
             <p class="name">
               Электронная почта
             </p>
             <p class="value">
-              doc@Chukotenergo.ru
+              {{ userData?.data?.email }}
             </p>
           </ion-text>
           <img src="../assets/next.svg" alt="go">
         </div>
-        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'phone' } })">
+        <div class="item" @click="$router.push({ path: '/tabs/profileEdit', name: 'ProfileEdit', query: { link: 'phone', phone: userData?.data?.phone } })">
           <ion-text>
             <p class="name">
               Телефон
             </p>
             <p class="value">
-              8 (999) 123-45-67
+              {{ userData?.data?.phone }}
             </p>
           </ion-text>
           <img src="../assets/next.svg" alt="go">
@@ -88,6 +90,8 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, Io
 import ExploreContainer from '@/components/ExploreContainer.vue';
 
 import { defineComponent } from 'vue';
+import {useLoginStore} from '../stores/login'
+import { mapActions } from 'pinia';
 
 export default defineComponent({
   name: 'Profile',
@@ -100,10 +104,21 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions(useLoginStore, ['getUser',]),
     afterTabChange: function (v: any) {
       this.selected = v.tab;
       console.log(v.tab)
     }
+  },
+  computed: {
+    userData(){
+      return this.$pinia.state.value?.login?.userResponse
+    }
+  },
+  ionViewDidEnter(){
+    this.getUser().then(()=>{
+      console.log('userData:',this.$pinia.state.value?.login?.userResponse)
+    })
   },
   setup() {
     return {

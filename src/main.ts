@@ -26,11 +26,11 @@ import './styles/main.css';
 
 
 import Vue3Lottie from 'vue3-lottie'
-
-
+import { createPinia } from 'pinia'
+const pinia = createPinia()
 const app = createApp(App).use(Vue3Lottie)
   .use(IonicVue)
-  .use(router);
+  .use(router).use(pinia);
   
 router.isReady().then(() => {
   app.mount('#app');

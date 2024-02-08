@@ -7,12 +7,12 @@
         <img class="logo" src="../assets/logo.svg" alt="logo" />
         <div class="input-wrapper">
 
-          <input class="input" required />
+          <input :value="login" v-on:change="(e)=>login = e.target.value" class="input" required />
           <label>Лицевой счет</label>
         </div>
 
         <div class="input-wrapper">
-          <input class="input" ref="passAuth" required type="password" />
+          <input :value="password" v-on:change="(e)=>password = e.target.value" class="input" ref="passAuth" required type="password" />
           <label>Пароль</label>
           <div @click="passToggle">
             <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
@@ -27,7 +27,7 @@
     <ion-footer class="ion-no-border">
 
       <div class="btns container">
-        <button class="btn" @click="$router.push('/tabs')">Войти</button>
+        <button class="btn" @click="authUserHandler(login, password)">Войти</button>
         <button class="btn-clear" @click="$router.push('/reg')">Зарегистрироваться</button>
 
       </div>
@@ -37,8 +37,9 @@
   
 <script lang="ts">
 import { IonPage, IonContent, IonFooter } from '@ionic/vue';
-
 import { defineComponent } from 'vue';
+import {mapActions} from 'pinia'
+import {useLoginStore} from '../stores/login'
 
 export default defineComponent({
   name: 'Auth',
@@ -47,10 +48,23 @@ export default defineComponent({
   },
   data() {
     return {
-      pass: false
+      pass: false,
+      password: '',
+      login: '',
     }
   },
+  
   methods: {
+    ...mapActions(useLoginStore, ["authUser",]),
+    authUserHandler(login: any, password: any){
+      this.authUser(login, password).then(()=>{
+        if(this.$pinia.state.value?.login.authResponse.status == true) {
+          this.$router.push('/tabs')
+        }
+        console.log('authUser response:',this.$pinia.state.value?.login.authResponse)
+      })
+
+    },
     passToggle() {
       var x = this.$refs.passAuth
       if (x?.type === "password") {

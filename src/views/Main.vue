@@ -22,9 +22,11 @@
         <div class="card user-info">
           <ion-text>
             <p class="name">ФИО</p>
-            <p class="value">Иванов Иван Иванович</p>
-            <p class="name">Адрес</p>
-            <p class="value">г Анадырь ул.Куркутского, д. 34</p>
+            <p class="value">{{ userData?.data?.lastname }}
+              {{ userData?.data?.name }}
+              {{ userData?.data?.secondname }}</p>
+            <!-- <p class="name">Адрес</p>
+            <p class="value">г Анадырь ул.Куркутского, д. 34</p> -->
             <p class="name">Гарантирующий поставщик</p>
             <p class="value">АО «Чукотэне́рго» </p>
           </ion-text>
@@ -51,15 +53,16 @@
           </p>
 
           <div class="acc-list">
-            <div class="acc-item active">
+            <div v-for="el in lcsData?.data?.lcs" class="acc-item">
+              № {{ el }}
+            </div>
+
+            <!-- <div class="acc-item">
               № 12345678901
             </div>
             <div class="acc-item">
               № 12345678901
-            </div>
-            <div class="acc-item">
-              № 12345678901
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -176,12 +179,26 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMe
 import ExploreContainer from '@/components/ExploreContainer.vue';
 import { defineComponent, ref } from 'vue';
 import { useRouter } from "vue-router";
-
+import { Storage } from '@ionic/storage'
+import { mapActions } from 'pinia';
+import { useLoginStore } from '../stores/login'
+import { useLcStore } from '../stores/lc'
 
 export default defineComponent({
   name: 'Main',
   components: {
     IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, ExploreContainer, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonModal
+  },
+
+  mounted() {
+    this.getUser()
+    this.getLcs().then(() => {
+      console.log(this.$pinia.state.value.lc.lcResponse)
+    })
+  },
+  methods: {
+    ...mapActions(useLoginStore, ['getUser']),
+    ...mapActions(useLcStore, ['getLcs'])
   },
   setup() {
     const router = useRouter()
@@ -199,6 +216,14 @@ export default defineComponent({
     return {
       setOpen, remove, isOpen,
     }
+  },
+  computed: {
+    userData() {
+      return this.$pinia.state.value?.login?.userResponse
+    },
+    lcsData() {
+      return this.$pinia.state.value?.lc?.lcResponse
+    },
   },
   data() {
     return {

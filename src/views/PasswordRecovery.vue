@@ -18,8 +18,12 @@
 
         </ion-text>
         <div class="input-wrapper" v-show="changeShow == false">
-          <input class="input" required />
-          <label>E-mail или номер телефона</label>
+          <input :value="email" v-on:change="(e: any) => email = e.target.value" class="input" required />
+          <label>E-mail</label>
+        </div>
+        <div class="input-wrapper" v-show="changeShow == false">
+          <input :value="login" v-on:change="(e: any) => login = e.target.value" class="input" required />
+          <label>Номер телефона</label>
         </div>
 
         <div v-show="changeShow == true">
@@ -49,7 +53,8 @@
 
     <ion-footer class="ion-no-border">
       <div class="btns container">
-        <button v-show="changeShow == false" class="btn" @click="() => changeShow = true">
+        <p class="response">{{ response }}</p>
+        <button v-show="changeShow == false" class="btn" @click="passwordRecoveryHandler">
           Далее
         </button>
         <button v-show="changeShow == true" class="btn" @click="$router.push('/tabs')">
@@ -63,17 +68,22 @@
   
 <script lang="ts">
 import { IonPage, IonContent, IonText, IonFooter } from '@ionic/vue';
-
+import { mapActions } from 'pinia';
+import { useLoginStore } from '../stores/login'
 import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'PasswordRecovery',
+
   components: {
     IonPage, IonContent, IonText, IonFooter,
   },
   data() {
     return {
       changeShow: false,
+      email: '',
+      login: '',
+      response: '',
       pass: {
         passOld: false,
         passNew: false,
@@ -81,6 +91,26 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions(useLoginStore, ['passwordRecovery',]),
+    passwordRecoveryHandler() {
+      let data = {}
+      // console.log(this.login)
+      // if (this.login.includes('@')) {
+      //   data = {
+      //     email: this.email,
+      //   }
+      // } else {
+        data = {
+          email: this.email,
+          login: this.login,
+        }
+      // }
+
+      this.passwordRecovery(data).then(() => {
+        this.response = this.$pinia.state.value.login.passRecoveryResponse?.data
+        console.log(this.$pinia.state.value.login.passRecoveryResponse)
+      })
+    },
     passToggle(el: string) {
       if (el == 'passOld') {
         var x = this.$refs.passOld

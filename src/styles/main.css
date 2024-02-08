@@ -744,3 +744,9 @@ ion-title {
     width: 33.3%;
 }
 
+
+
+.errorText{
+    color: #F00;
+    margin-top: 20px;
+}
