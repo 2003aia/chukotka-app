@@ -27,6 +27,8 @@
     <ion-footer class="ion-no-border">
 
       <div class="btns container">
+        <p class="errorText">{{ errorText }}</p>
+
         <button class="btn" @click="authUserHandler(login, password)">Войти</button>
         <button class="btn-clear" @click="$router.push('/reg')">Зарегистрироваться</button>
 
@@ -51,6 +53,7 @@ export default defineComponent({
       pass: false,
       password: '',
       login: '',
+      errorText: '',
     }
   },
   
@@ -58,8 +61,10 @@ export default defineComponent({
     ...mapActions(useLoginStore, ["authUser",]),
     authUserHandler(login: any, password: any){
       this.authUser(login, password).then(()=>{
-        if(this.$pinia.state.value?.login.authResponse.status == true) {
+        if(this.$pinia.state.value?.login.authResponse?.status == true) {
           this.$router.push('/tabs')
+        } else {
+          this.errorText = this.$pinia.state.value?.login.authResponse?.data
         }
         console.log('authUser response:',this.$pinia.state.value?.login.authResponse)
       })

@@ -22,9 +22,9 @@
                 <div class="card user-info">
                     <ion-text>
                         <p class="name">ФИО</p>
-                        <p class="value">Иванов Иван Иванович</p>
-                        <p class="name">Адрес</p>
-                        <p class="value">г Анадырь ул.Куркутского, д. 34</p>
+                        <p class="value">{{ user?.lastname }} {{ user?.name }} {{ user?.secondname }}</p>
+                        <!-- <p class="name">Адрес</p>
+                        <p class="value">г Анадырь ул.Куркутского, д. 34</p> -->
                         <p class="name">Гарантирующий поставщик</p>
                         <p class="value">АО «Чукотэне́рго» </p>
                     </ion-text>
@@ -35,14 +35,15 @@
                     </p>
 
                     <div class="acc-list">
-                        <div class="acc-item active">
-                            № 12345678901
+
+                        <div class="spinner" v-show="loadingLcs">
+                            <ion-spinner name="circles"></ion-spinner>
                         </div>
-                        <div class="acc-item">
-                            № 12345678901
-                        </div>
-                        <div class="acc-item">
-                            № 12345678901
+                        <div v-show="!loadingLcs" class="acc-item" v-for="el in lcs" @click="changeTab(el)" :key="el"
+                            :href="el.lc" :class="[el?.current && 'active']">
+                            <div :id="el">
+                                № {{ el.lc }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -104,12 +105,16 @@
                 </div>
 
                 <div class="card">
-                    <div class="block" v-for="el in accrualsInfo">
-                        <p class="card-title">{{ el.title }}</p>
+
+                    <div class="spinner" v-show="loadingPayments">
+                        <ion-spinner name="circles"></ion-spinner>
+                    </div>
+                    <div v-show="!loadingPayments" class="block" v-for="el in /*  accrualsInfo */paymentsArray">
+                        <p class="card-title">{{ el.period }}</p>
                         <div class="card-list">
                             <div class="card-item">
                                 <p class="name">Начислено</p>
-                                <p class="value">{{ el.charged }}</p>
+                                <p class="value">{{ el.summa }}</p>
                             </div>
                             <div class="card-item">
                                 <p class="name">К оплате на начало месяца</p>
@@ -129,25 +134,36 @@
 
 
                 </div>
-               
+
             </div>
         </ion-content>
     </ion-page>
 </template>
     
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonModal } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonModal, IonSpinner } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 import { defineComponent, ref } from 'vue';
+import { mapActions } from 'pinia';
+import { Storage } from '@ionic/storage';
+import { useLcStore } from '../stores/lc'
 
 export default defineComponent({
     name: 'AccrualAndPayment',
     components: {
-        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonModal
+        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonModal, IonSpinner
     },
     data() {
         return {
+            lcs: [],
+            loadingPayments: false,
+            loadingLcs: false,
+            user: {
+                lastname: '',
+                name: '',
+                secondname: ''
+            },
             from: '',
             to: '',
             year: new Date().getFullYear(),
@@ -169,7 +185,7 @@ export default defineComponent({
             monthTo: '',
 
             currentMonth: new Date().getMonth(),
-            
+
             accrualsInfo: [
                 {
                     title: 'Май 2022',
@@ -189,6 +205,19 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapActions(useLcStore, ['getPayments', 'getLcs']),
+        changeTab(selected: any) {
+            this.loadingPayments = true
+            this.getPayments(selected?.lc).then(() => {
+                console.log('selected', this.$pinia.state.value.lc?.paymentsResponse)
+                this.loadingPayments = false
+
+            })
+
+            this.lcs?.map((t: any) => {
+                t?.lc === selected?.lc ? t.current = true : t.current = false
+            });
+        },
         setMonth(el: string, el2: string) {
             if (el2 == 'from') {
                 this.$data.from = `${el} ${this.$data.year}`
@@ -214,10 +243,55 @@ export default defineComponent({
             }
         }
     },
+
+    mounted() {
+
+        const getStore = async () => {
+            const store = new Storage()
+            await store.create()
+            let user = await store.get('user')
+            this.user = JSON.parse(user)
+        }
+        getStore()
+        this.loadingPayments = true
+        this.loadingLcs = true
+        this.getLcs().then(() => {
+            this.loadingLcs = false
+            this.loadingPayments = true
+
+            this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+                if (index === 0) {
+                    this.lcs.push({ lc: el, current: true })
+
+                } else {
+                    this.lcs.push({ lc: el, current: false })
+                }
+            });
+            // console.log(this.lcs)
+            if (this.$pinia.state.value.lc?.lcResponse?.status == true) {
+
+                this.getPayments(this.$pinia.state.value.lc?.lcResponse?.data?.lcs[0]).then(() => {
+                    console.log(this.$pinia.state.value.lc?.paymentsResponse)
+                    this.loadingPayments = false
+
+                })
+            }
+
+        })
+
+    },
     ionViewWillEnter() {
         this.$data.from = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.year}`
         this.$data.to = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.yearTo}`
 
+    },
+    computed: {
+        lcArray() {
+            return this.$pinia.state.value.lc?.lcResponse?.data?.lcs
+        },
+        paymentsArray() {
+            return this.$pinia.state.value.lc?.paymentsResponse?.data
+        }
     },
     setup() {
         const router = useRouter()
@@ -272,14 +346,14 @@ export default defineComponent({
     font-size: 14px;
 }
 
-.card .block{
+.card .block {
     border-bottom: 1px solid #E4F1FF;
     border-radius: 2px;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.card .block:last-child{
+.card .block:last-child {
     margin-bottom: 0;
     padding: 0;
     border-bottom: 0;
@@ -288,7 +362,8 @@ export default defineComponent({
 .btn-link {
     margin-top: 0;
 }
-.input-text{
+
+.input-text {
     font-family: AppFont-Bold;
 }
 </style>

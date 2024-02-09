@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="radio">
-          <input id="policy" type="radio" name="policy" value="policy">
+          <input :value="check" v-model="check" id="policy" type="radio" name="policy">
           <label class="label" for="policy">
             <span></span>
             <p>Я принимаю условия <a class="link">пользовательского соглашения</a></p>
@@ -91,13 +91,15 @@ export default defineComponent({
       tel: '',
       password: '',
       passwordConfirm: '',
+      check: 'policy',
       errorText: ''
     }
   },
   methods: {
     ...mapActions(useLoginStore, ['registrUser',]),
     registrUserHandler() {
-      if (this.password == this.passwordConfirm) {
+      console.log(this.check, 'check')
+      if (this.password == this.passwordConfirm ) {
         let data = {
           login: this.login,
           lastname: this.lastname,

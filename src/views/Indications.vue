@@ -25,13 +25,13 @@
           </p>
 
           <div class="acc-list">
-            <div class="acc-item active">
+            <div class="acc-item active" id="12345678901">
               № 12345678901
             </div>
-            <div class="acc-item">
+            <div class="acc-item" id="12345678902">
               № 12345678901
             </div>
-            <div class="acc-item">
+            <div class="acc-item" id="12345678903">
               № 12345678901
             </div>
           </div>

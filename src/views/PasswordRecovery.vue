@@ -23,13 +23,16 @@
         </div>
         <div class="input-wrapper" v-show="changeShow == false">
           <input :value="login" v-on:change="(e: any) => login = e.target.value" class="input" required />
-          <label>Номер телефона</label>
+          <label>Логин</label>
         </div>
-
+        <div class="input-wrapper" v-show="changeShow == false">
+          <input :value="pok" v-on:change="(e: any) => pok = e.target.value" class="input" required />
+          <label>Последнее показание</label>
+        </div>
         <div v-show="changeShow == true">
 
           <div class="input-wrapper">
-            <input required ref="passOld" type="password" class="input">
+            <input :value="password" v-on:change="(e:any)=>password = e.target.value" required ref="passOld" type="password" class="input">
             <label>Пароль</label>
             <div @click="passToggle('passOld')">
               <img v-show="pass.passOld == true" src="../assets/pass-close.svg" alt="pen">
@@ -37,7 +40,7 @@
             </div>
           </div>
           <div class="input-wrapper">
-            <input required ref="passNew" type="password" class="input">
+            <input :value="passwordConfirm" v-on:change="(e:any)=>passwordConfirm = e.target.value" required ref="passNew" type="password" class="input">
             <label>Повторите пароль</label>
             <div @click="passToggle('passNew')">
               <img v-show="pass.passNew == true" src="../assets/pass-close.svg" alt="pen">
@@ -57,7 +60,7 @@
         <button v-show="changeShow == false" class="btn" @click="passwordRecoveryHandler">
           Далее
         </button>
-        <button v-show="changeShow == true" class="btn" @click="$router.push('/tabs')">
+        <button v-show="changeShow == true" class="btn" @click="authHandler">
           Далее
         </button>
       </div>
@@ -83,7 +86,11 @@ export default defineComponent({
       changeShow: false,
       email: '',
       login: '',
+      pok: '',
+      password: '',
+      passwordConfirm: '',
       response: '',
+      error: '',
       pass: {
         passOld: false,
         passNew: false,
@@ -91,7 +98,7 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapActions(useLoginStore, ['passwordRecovery',]),
+    ...mapActions(useLoginStore, ['passwordRecovery', 'authUser']),
     passwordRecoveryHandler() {
       let data = {}
       // console.log(this.login)
@@ -100,16 +107,38 @@ export default defineComponent({
       //     email: this.email,
       //   }
       // } else {
-        data = {
-          email: this.email,
-          login: this.login,
-        }
+      data = {
+        email: this.email,
+        login: this.login,
+        pok: this.pok,
+      }
       // }
 
       this.passwordRecovery(data).then(() => {
+        if (this.$pinia.state.value.login.passRecoveryResponse?.status == true) {
+          this.changeShow = true
+        } else {
+          console.log(this.$pinia.state.value.login.passRecoveryResponse)
+
+        }
         this.response = this.$pinia.state.value.login.passRecoveryResponse?.data
         console.log(this.$pinia.state.value.login.passRecoveryResponse)
       })
+    },
+    authHandler() {
+      if(this.password == this.passwordConfirm) {
+        this.authUser(this.login, this.password).then(() => {
+        if (this.$pinia.state.value?.login.authResponse?.status == true) {
+          this.$router.push('/tabs')
+        } else {
+          console.log(this.$pinia.state.value?.login.authResponse)
+        }
+        this.response = this.$pinia.state.value?.login.authResponse?.data
+      })
+      } else {
+        this.error = 'Пароли не совпадают!'
+      }
+      
     },
     passToggle(el: string) {
       if (el == 'passOld') {

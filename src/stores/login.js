@@ -104,11 +104,11 @@ export const useLoginStore = defineStore({
                     .post(
                         `${apiUrl}confirmation`,
                         data,
-                        {
+                        /* {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
                             }
-                        }
+                        } */
                     )
                     .then((response) => (this.codeResponse = response.data));
             } catch (error) {

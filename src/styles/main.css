@@ -7,6 +7,7 @@
     margin: auto;
 }
 
+
 .header-wrapper {
     display: flex;
     justify-content: space-between;
@@ -110,6 +111,7 @@ p {
     padding: 15px;
     margin-bottom: 24px;
 }
+
 .card .link {
     color: #005D9F;
 }
@@ -279,7 +281,7 @@ input:valid~label {
 }
 
 
-.input-wrapper input:not(:focus):valid~label{
+.input-wrapper input:not(:focus):valid~label {
     color: #ABA8A8;
 }
 
@@ -320,9 +322,11 @@ input:valid~label {
     width: 100%;
     margin-top: 10px;
 }
-.radio label p{
+
+.radio label p {
     margin-bottom: 0;
 }
+
 .radio label {
     display: flex;
     align-items: center;
@@ -471,6 +475,7 @@ ion-title {
     flex-direction: row;
     overflow: auto;
     margin-bottom: 25px;
+    overflow-y: hidden;
 }
 
 .acc-item {
@@ -565,7 +570,7 @@ ion-title {
     color: #005D9F;
     top: 0px;
     left: 0px;
-    opacity:initial;
+    opacity: initial;
     padding: 0px 0px 0px 0px;
 }
 
@@ -681,7 +686,7 @@ ion-title {
     justify-content: space-between;
     font-size: 14px;
     color: #232323;
-    
+
 }
 
 
@@ -746,7 +751,16 @@ ion-title {
 
 
 
-.errorText{
+.errorText {
     color: #F00;
     margin-top: 20px;
+}
+
+.spinner{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+ion-spinner {
+    --color: #fff /* #005D9F */;
 }

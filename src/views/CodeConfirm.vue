@@ -70,7 +70,7 @@ export default defineComponent({
       }
       this.confirm(data).then(() => {
         this.response = this.$pinia.state.value.login.codeResponse?.data
-        if (this.$pinia.state.value.login.codeResponse?.status == true) {
+        if (this.$pinia.state.value.login.codeResponse?.status == false/* true */) {
           this.$router.push('/confirm')
         } else {
           console.log(this.$pinia.state.value.login.codeResponse)
