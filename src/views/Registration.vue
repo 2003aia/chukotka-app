@@ -62,14 +62,21 @@
     </ion-content>
     <ion-footer class="ion-no-border">
       <div class="btns container">
-        <button class="btn" @click="registrUserHandler">Зарегистрироваться</button>
+        <button class="btn" @click="registrUserHandler">
+          <div class="spinner" v-show="loading">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <span v-show="!loading">
+            Зарегистрироваться
+          </span>
+        </button>
       </div>
     </ion-footer>
   </ion-page>
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter } from '@ionic/vue';
+import { IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter, IonSpinner } from '@ionic/vue';
 
 import { defineComponent } from 'vue';
 import { mapActions } from 'pinia';
@@ -78,7 +85,7 @@ import { useLoginStore } from '../stores/login'
 export default defineComponent({
   name: 'Registration',
   components: {
-    IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter
+    IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter, IonSpinner
   },
   data() {
     return {
@@ -92,12 +99,14 @@ export default defineComponent({
       password: '',
       passwordConfirm: '',
       check: 'policy',
-      errorText: ''
+      errorText: '',
+      loading: false,
     }
   },
   methods: {
     ...mapActions(useLoginStore, ['registrUser',]),
     registrUserHandler() {
+      this.loading = true
       console.log(this.check, 'check')
       if (this.password == this.passwordConfirm ) {
         let data = {
@@ -113,6 +122,7 @@ export default defineComponent({
         console.log(data)
 
         this.registrUser(data).then(() => {
+          this.loading = false
           if (this.$pinia.state.value?.login.registrResponse.status == true) {
             this.$router.push('/codeConfirm')
           } else {
@@ -121,6 +131,8 @@ export default defineComponent({
           console.log(this.$pinia.state.value?.login.registrResponse)
         })
       } else {
+        this.loading = false
+
         this.errorText = 'Пароли не совпадают'
       }
 

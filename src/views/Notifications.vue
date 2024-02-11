@@ -19,17 +19,19 @@
         </ion-header>
         <ion-content :fullscreen="true">
             <div class="container">
+                <div class="spinner" v-show="loading">
+                    <ion-spinner name="circles"></ion-spinner>
+                </div>
 
 
-                <div class="card">
+                <div class="card" v-for="el in notif" :key="el?.id" v-show="!loading">
                     <ion-text>
                         <div class="card-item">
-                            <p class="name link">Передача показаний</p>
-                            <p class="value">8590,0</p>
+                            <p class="name link">{{el?.name }}</p>
+                            <p class="value">{{ el?.date_create?.substring(0,10) }}</p>
                         </div>
                         <p class="text">
-                            Уважаемые клиенты!
-                            С 20 по 25 числа каждого месяца Вы...
+                            {{ el?.text }}
                         </p>
                         <a class="link">Подробнее</a>
                     </ion-text>
@@ -43,17 +45,34 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue'
+import {mapActions} from "pinia"
+import {useNotifStore} from '../stores/notifications'
 
 export default defineComponent({
     name: 'Уведомления',
     components: {
-        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText
+        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner
+    },
+    methods: {
+        ...mapActions(useNotifStore, ['getNotif'])
+    },
+    mounted(){
+        this.loading =true
+        this.getNotif().then(()=>{
+            this.loading = false
+            console.log(this.$pinia.state.value.notif?.notifResponse)
+        })
+    },
+    computed:{
+        notif(){
+            return this.$pinia.state.value.notif?.notifResponse?.data
+        }
     },
     data() {
         return {
-
+loading: false,
         }
     }
 })

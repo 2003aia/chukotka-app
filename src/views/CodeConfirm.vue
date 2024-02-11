@@ -32,7 +32,12 @@
       <div class="btns container">
         <p class="response">{{ response }}</p>
         <button class="btn" @click="confirmHandler">
-          Далее
+          <div class="spinner" v-show="loading">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <span v-show="!loading">
+            Далее
+          </span>
         </button>
       </div>
     </ion-footer>
@@ -40,7 +45,7 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonFooter } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonFooter, IonSpinner } from '@ionic/vue';
 
 import { defineComponent } from 'vue';
 import { mapActions } from 'pinia';
@@ -49,7 +54,7 @@ import { useLoginStore } from '../stores/login'
 export default defineComponent({
   name: 'CodeConfirm',
   components: {
-    IonPage, IonContent, IonText, IonFooter
+    IonPage, IonContent, IonText, IonFooter, IonSpinner
   },
   data() {
     return {
@@ -59,16 +64,19 @@ export default defineComponent({
       third: '',
       fourth: '',
       response: '',
+      loading: false
     }
   },
   methods: {
     ...mapActions(useLoginStore, ['confirm',]),
     confirmHandler() {
+      this.loading = true
       let input = this.first + this.second + this.third + this.fourth
       let data = {
         code: input
       }
       this.confirm(data).then(() => {
+        this.loading = false
         this.response = this.$pinia.state.value.login.codeResponse?.data
         if (this.$pinia.state.value.login.codeResponse?.status == false/* true */) {
           this.$router.push('/confirm')

@@ -25,29 +25,33 @@
           </p>
 
           <div class="acc-list">
-            <div class="acc-item active" id="12345678901">
-              № 12345678901
+            <div class="spinner" v-show="loadingLcs">
+              <ion-spinner name="circles"></ion-spinner>
             </div>
-            <div class="acc-item" id="12345678902">
+            <div class="acc-item" v-show="!loadingLcs" v-for="el in lcs" @click="changeTab(el)" :key="el" :href="el?.lc"
+              :class="[el?.current && 'active']">
+              № {{ el?.lc }}
+            </div>
+            <!-- <div class="acc-item" id="12345678902">
               № 12345678901
             </div>
             <div class="acc-item" id="12345678903">
               № 12345678901
-            </div>
+            </div> -->
           </div>
         </div>
 
         <div class="card">
           <ion-text>
             <p class="name">Последнее показание 1 тарифа</p>
-            <p class="value">8590,0</p>
+            <p class="value">{{ lcInfo?.devices[0]?.pok }}</p>
           </ion-text>
           <div class="card-input">
             <p class="title">Новое показание</p>
-            <input placeholder="146.55" type="text">
+            <input v-model="indice" placeholder="146.55" type="text">
 
           </div>
-          <div>
+          <!-- <div>
             <div class="line"></div>
             <ion-text>
               <p class="name">Последнее показание 2 тарифа</p>
@@ -58,10 +62,10 @@
               <input placeholder="146.55" type="text">
 
             </div>
-          </div>
+          </div> -->
 
           <div class="btns">
-            <button class="btn" style="margin-bottom: 0;">
+            <button @click="addIndiceHandler(lcInfo?.lc)" class="btn" style="margin-bottom: 0;">
               Передать показания
             </button>
           </div>
@@ -70,9 +74,22 @@
 
         <div class="card">
           <div class="card-list">
-            <div class="card-line" v-for="el in indiceInfo">
+
+            <!-- <div class="card-line" v-for="el in indiceInfo">
               <p class="name">{{ el.name }}</p>
               <p class="value">{{ el.value }}</p>
+            </div> -->
+            <div class="card-line">
+              <p class="name">Прибор учета</p>
+              <p class="value">ПУ {{ lcInfo?.devices[0]?.number }}</p>
+            </div>
+            <div class="card-line">
+              <p class="name">Адрес</p>
+              <p class="value">{{ lcInfo?.address }}</p>
+            </div>
+            <div class="card-line">
+              <p class="name">Площадь помещения</p>
+              <p class="value">{{ lcInfo?.area }}</p>
             </div>
           </div>
 
@@ -84,16 +101,72 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue'
+import { useLcStore } from '../stores/lc'
+import { mapActions } from 'pinia';
 
 export default defineComponent({
   name: 'Показания',
   components: {
-    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner
+  },
+  methods: {
+    ...mapActions(useLcStore, ['getLcs', 'getLc', 'addIndice']),
+    changeTab(selected: any) {
+      console.log(selected)
+      this.loadingLcInfo = true
+      this.getLc(selected?.lc).then(() => {
+        console.log('selected', this.$pinia.state.value.lc?.lcInfoResponse)
+        this.loadingLcInfo = false
+
+      })
+
+      this.lcs?.map((t: any) => {
+        t?.lc === selected?.lc ? t.current = true : t.current = false
+      });
+    },
+    addIndiceHandler(lc: any) {
+      this.addIndice(lc).then(() => {
+        console.log(this.$pinia.state.value?.lc?.addIndiceResponse)
+      })
+    },
+  },
+  mounted() {
+    this.loadingLcs = true
+    this.getLcs().then(() => {
+      if (this.$pinia.state.value.lc.lcResponse?.status == true) {
+        this.loadingLcInfo = true
+        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]).then(() => {
+          this.loadingLcInfo = false
+
+        })
+      }
+      this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+        if (index === 0) {
+          this.lcs.push({ lc: el, current: true })
+
+        } else {
+          this.lcs.push({ lc: el, current: false })
+          // console.log(this.lcs)
+        }
+      });
+      console.log(this.$pinia.state.value?.lc?.lcResponse)
+      this.loadingLcs = false
+    })
+  },
+  computed: {
+    lcInfo() {
+      return this.$pinia.state.value.lc?.lcInfoResponse?.data
+    }
   },
   data() {
     return {
+      lcs: [],
+      loadingLcs: false,
+      loadingLcInfo: false,
+      indice: '',
+      response: '',
       indiceInfo: [
         {
           name: 'Прибор учета',
@@ -101,10 +174,10 @@ export default defineComponent({
         },
         {
           name: 'Адрес',
-          value: 'ПУ №12345678'
+          value: 'г Анадырь ул. Куркутского, д. 34'
         },
         {
-          name: 'г Анадырь ул. Куркутского, д. 34',
+          name: 'Площадь помещения',
           value: '56,78 кв. м'
         },
         {

@@ -29,7 +29,14 @@
       <div class="btns container">
         <p class="errorText">{{ errorText }}</p>
 
-        <button class="btn" @click="authUserHandler(login, password)">Войти</button>
+        <button class="btn" @click="authUserHandler(login, password)">
+          <div class="spinner">
+            <ion-spinner v-show="loadingAuth" name="circles"></ion-spinner>
+          </div>
+          <span v-show="!loadingAuth">
+            Войти
+          </span>
+        </button>
         <button class="btn-clear" @click="$router.push('/reg')">Зарегистрироваться</button>
 
       </div>
@@ -38,7 +45,7 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonFooter } from '@ionic/vue';
+import { IonPage, IonContent, IonFooter, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {mapActions} from 'pinia'
 import {useLoginStore} from '../stores/login'
@@ -46,7 +53,7 @@ import {useLoginStore} from '../stores/login'
 export default defineComponent({
   name: 'Auth',
   components: {
-    IonPage, IonContent, IonFooter
+    IonPage, IonContent, IonFooter, IonSpinner
   },
   data() {
     return {
@@ -54,13 +61,16 @@ export default defineComponent({
       password: '',
       login: '',
       errorText: '',
+      loadingAuth: false,
     }
   },
   
   methods: {
     ...mapActions(useLoginStore, ["authUser",]),
     authUserHandler(login: any, password: any){
+      this.loadingAuth = true
       this.authUser(login, password).then(()=>{
+        this.loadingAuth = false
         if(this.$pinia.state.value?.login.authResponse?.status == true) {
           this.$router.push('/tabs')
         } else {

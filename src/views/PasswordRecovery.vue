@@ -58,10 +58,20 @@
       <div class="btns container">
         <p class="response">{{ response }}</p>
         <button v-show="changeShow == false" class="btn" @click="passwordRecoveryHandler">
-          Далее
+          <div class="spinner" v-show="loadingRecovery">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <span v-show="!loadingRecovery">
+            Далее
+          </span>
         </button>
         <button v-show="changeShow == true" class="btn" @click="authHandler">
-          Далее
+          <div class="spinner" v-show="loadingAuth">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <span v-show="!loadingAuth">
+            Далее
+          </span>
         </button>
       </div>
 
@@ -70,7 +80,7 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonFooter } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonFooter, IonSpinner } from '@ionic/vue';
 import { mapActions } from 'pinia';
 import { useLoginStore } from '../stores/login'
 import { defineComponent } from 'vue';
@@ -79,7 +89,7 @@ export default defineComponent({
   name: 'PasswordRecovery',
 
   components: {
-    IonPage, IonContent, IonText, IonFooter,
+    IonPage, IonContent, IonText, IonFooter, IonSpinner
   },
   data() {
     return {
@@ -95,11 +105,14 @@ export default defineComponent({
         passOld: false,
         passNew: false,
       },
+      loadingAuth: false,
+      loadingRecovery: false
     }
   },
   methods: {
     ...mapActions(useLoginStore, ['passwordRecovery', 'authUser']),
     passwordRecoveryHandler() {
+      this.loadingRecovery = true
       let data = {}
       // console.log(this.login)
       // if (this.login.includes('@')) {
@@ -115,6 +128,7 @@ export default defineComponent({
       // }
 
       this.passwordRecovery(data).then(() => {
+        this.loadingRecovery = false
         if (this.$pinia.state.value.login.passRecoveryResponse?.status == true) {
           this.changeShow = true
         } else {
@@ -126,7 +140,9 @@ export default defineComponent({
       })
     },
     authHandler() {
+      this.loadingAuth = true
       if(this.password == this.passwordConfirm) {
+        this.loadingAuth = false
         this.authUser(this.login, this.password).then(() => {
         if (this.$pinia.state.value?.login.authResponse?.status == true) {
           this.$router.push('/tabs')
@@ -136,6 +152,8 @@ export default defineComponent({
         this.response = this.$pinia.state.value?.login.authResponse?.data
       })
       } else {
+        this.loadingAuth = false
+
         this.error = 'Пароли не совпадают!'
       }
       
