@@ -26,14 +26,12 @@
           </p>
 
           <div class="acc-list">
-            <div class="acc-item active">
-              № 12345678901
+            <div class="spinner" v-show="loadingLcs">
+              <ion-spinner name="circles"></ion-spinner>
             </div>
-            <div class="acc-item">
-              № 12345678901
-            </div>
-            <div class="acc-item">
-              № 12345678901
+            <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)" :key="el"
+              :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
+              № {{ el?.lc?.lc_number }}
             </div>
           </div>
         </div>
@@ -73,16 +71,45 @@
               <div slot="content">
 
                 <div class="card">
-                  <div class="card-list">
-                    <div class="card-line" v-for="el in accInfo">
-                      <p class="name">{{ el.name }}</p>
-                      <p class="value">{{ el.value }}</p>
+                  <div class="spinner" v-show="loadingLcInfo">
+                    <ion-spinner name="circles"></ion-spinner>
+                  </div>
+                  <div class="card-list" v-show="!loadingLcInfo">
+                    <div class="card-line">
+                      <p class="name">Лицевой счет</p>
+                      <p class="value">№ {{ lcInfo?.lc }}</p>
+                    </div>
+                    <div class="card-line">
+                      <p class="name">Адрес</p>
+                      <p class="value">№ {{ lcInfo?.address }}</p>
+                    </div>
+                    <div class="card-line">
+
+                      <p class="name">Площадь помещения </p>
+                      <p class="value">{{ lcInfo?.area }} кв. м</p>
+                    </div>
+                    <p class="card-title" style="border: none;">
+                      Приборы учета
+                    </p>
+                    <div class="card-line" v-for="el in lcInfo?.devices">
+
+                      <div class="card-list">
+                        <div class="card-item">
+                          <p class="name">Прибор учета</p>
+                          <p class="value">{{ el?.number }}</p>
+                        </div>
+                      </div>
+                      <div class="card-list">
+                        <div class="card-item">
+                          <p class="name">Последнее показание ПУ</p>
+                          <p class="value">{{ el?.pok }}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
+
                 </div>
               </div>
-
             </ion-accordion>
 
           </ion-accordion-group>
@@ -93,17 +120,22 @@
 </template>
 
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonAccordionGroup, IonAccordion, IonItem } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonAccordionGroup, IonAccordion, IonItem, IonSpinner } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
 import { defineComponent } from 'vue';
+import { mapActions } from 'pinia'
+import { useLcStore } from '../stores/lc'
 
 export default defineComponent({
   name: 'Payment',
   components: {
-    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonAccordionGroup, IonAccordion, IonItem
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonAccordionGroup, IonAccordion, IonItem, IonSpinner
   },
   data() {
     return {
+      lcs: [],
+      loadingLcs: false,
+      loadingLcInfo: false,
       accInfo: [
         {
           name: 'Лицевой счет',
@@ -125,12 +157,53 @@ export default defineComponent({
           name: 'Тип',
           value: 'Частная'
         },
-        
+
       ],
     }
   },
-  methods: {
+  mounted() {
+    this.loadingLcs = true
+    this.getLcs().then(() => {
+      this.loadingLcs = false
+      if (this.$pinia.state.value.lc.lcResponse?.status == true) {
+        this.loadingLcInfo = true
+        console.log(this.$pinia.state.value.lc.lcResponse?.data)
+        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]?.lc_number).then(() => {
+          this.loadingLcInfo = false
 
+        })
+      }
+      this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
+        if (index === 0) {
+          this.lcs.push({ lc: el, current: true })
+
+        } else {
+          this.lcs.push({ lc: el, current: false })
+          // console.log(this.lcs)
+        }
+      });
+    })
+  },
+  computed: {
+    lcInfo() {
+      return this.$pinia.state?.value?.lc?.lcInfoResponse?.data
+    }
+  },
+  methods: {
+    ...mapActions(useLcStore, ['getLcs', 'getLc']),
+    changeTab(selected: any) {
+      this.loadingLcInfo = true
+      console.log(selected)
+      this.getLc(selected).then(() => {
+        console.log('selected', this.$pinia.state.value.lc?.lcInfoResponse)
+        this.loadingLcInfo = false
+
+      })
+
+      this.lcs?.map((t: any) => {
+        t?.lc?.lc_number === selected ? t.current = true : t.current = false
+      });
+    },
   },
   setup() {
     return {

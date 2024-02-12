@@ -28,9 +28,9 @@
             <div class="spinner" v-show="loadingLcs">
               <ion-spinner name="circles"></ion-spinner>
             </div>
-            <div class="acc-item" v-show="!loadingLcs" v-for="el in lcs" @click="changeTab(el)" :key="el" :href="el?.lc"
+            <div class="acc-item" v-show="!loadingLcs" v-for="el in lcs" @click="changeTab(el?.lc?.lc_number)" :key="el" :href="el?.lc?.lc_id"
               :class="[el?.current && 'active']">
-              № {{ el?.lc }}
+              № {{ el?.lc?.lc_number }}
             </div>
             <!-- <div class="acc-item" id="12345678902">
               № 12345678901
@@ -51,7 +51,7 @@
             <input v-model="indice" placeholder="146.55" type="text">
 
           </div>
-          <!-- <div>
+          <div>
             <div class="line"></div>
             <ion-text>
               <p class="name">Последнее показание 2 тарифа</p>
@@ -62,10 +62,10 @@
               <input placeholder="146.55" type="text">
 
             </div>
-          </div> -->
+          </div>
 
           <div class="btns">
-            <button @click="addIndiceHandler(lcInfo?.lc)" class="btn" style="margin-bottom: 0;">
+            <button @click="addIndiceHandler" class="btn" style="margin-bottom: 0;">
               Передать показания
             </button>
           </div>
@@ -73,23 +73,45 @@
 
 
         <div class="card">
-          <div class="card-list">
+          <div class="spinner" v-show="loadingLcInfo">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <div class="card-list" v-show="!loadingLcInfo">
 
             <!-- <div class="card-line" v-for="el in indiceInfo">
               <p class="name">{{ el.name }}</p>
               <p class="value">{{ el.value }}</p>
             </div> -->
             <div class="card-line">
-              <p class="name">Прибор учета</p>
-              <p class="value">ПУ {{ lcInfo?.devices[0]?.number }}</p>
+              <p class="name">Лицевой счет</p>
+              <p class="value">№ {{ lcInfo?.lc }}</p>
             </div>
             <div class="card-line">
               <p class="name">Адрес</p>
-              <p class="value">{{ lcInfo?.address }}</p>
+              <p class="value">№ {{ lcInfo?.address }}</p>
             </div>
             <div class="card-line">
-              <p class="name">Площадь помещения</p>
-              <p class="value">{{ lcInfo?.area }}</p>
+
+              <p class="name">Площадь помещения </p>
+              <p class="value">{{ lcInfo?.area }} кв. м</p>
+            </div>
+            <p class="card-title" style="border: none;">
+              Приборы учета
+            </p>
+            <div class="card-line" v-for="el in lcInfo?.devices">
+
+              <div class="card-list">
+                <div class="card-item">
+                  <p class="name">Прибор учета</p>
+                  <p class="value">{{ el?.number }}</p>
+                </div>
+              </div>
+              <div class="card-list">
+                <div class="card-item">
+                  <p class="name">Последнее показание ПУ</p>
+                  <p class="value">{{ el?.pok }}</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -116,14 +138,14 @@ export default defineComponent({
     changeTab(selected: any) {
       console.log(selected)
       this.loadingLcInfo = true
-      this.getLc(selected?.lc).then(() => {
+      this.getLc(selected).then(() => {
         console.log('selected', this.$pinia.state.value.lc?.lcInfoResponse)
         this.loadingLcInfo = false
 
       })
 
       this.lcs?.map((t: any) => {
-        t?.lc === selected?.lc ? t.current = true : t.current = false
+        t?.lc?.lc_number === selected ? t.current = true : t.current = false
       });
     },
     addIndiceHandler(lc: any) {
@@ -137,12 +159,12 @@ export default defineComponent({
     this.getLcs().then(() => {
       if (this.$pinia.state.value.lc.lcResponse?.status == true) {
         this.loadingLcInfo = true
-        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]).then(() => {
+        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]?.lc_number).then(() => {
           this.loadingLcInfo = false
 
         })
       }
-      this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+      this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
         if (index === 0) {
           this.lcs.push({ lc: el, current: true })
 

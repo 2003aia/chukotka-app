@@ -35,7 +35,7 @@
         <button style="margin-bottom: 30px;" class="btn-outline" @click="() => $router.push('/tabs/addAcc')">Добавить
           лицевой счет</button>
 
-        <div class="receipt">
+        <div class="receipt" @click="$router.push('/tabs/receipt')">
           <div class="rec-block">
             <p class="rec-title">
               Электронная квитанция
@@ -56,9 +56,9 @@
             <div class="spinner" v-show="loadingLcs">
               <ion-spinner name="circles"></ion-spinner>
             </div>
-            <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el)" :key="el" :href="el?.lc"
-              :class="[el?.current && 'active']">
-              № {{ el.lc }}
+            <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)" :key="el"
+              :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
+              № {{ el.lc?.lc_number }}
             </div>
 
             <!-- <div class="acc-item">
@@ -81,37 +81,38 @@
               <p class="name">Лицевой счет</p>
               <p class="value">№ {{ lcInfo?.lc }}</p>
             </div>
-            <div class="card-line" v-for="el in lcInfo?.devices">
-              <div class="card-line">
-                <p class="name">Приборы учета</p>
-                <p class="value">ПУ {{ el?.number }}</p>
-              </div>
-
-              <div class="card-line">
-                <p class="name">Последнее показание ПУ</p>
-                <p class="value">{{ el?.pok }}</p>
-              </div>
-
+            <div class="card-line">
+              <p class="name">Адрес</p>
+              <p class="value">№ {{ lcInfo?.address }}</p>
             </div>
-            <!-- <div class="card-line">
-
-              <p class="name">Последнее показание ПУ</p>
-              <p class="value">8590,0</p>
-            </div> -->
             <div class="card-line">
 
               <p class="name">Площадь помещения </p>
               <p class="value">{{ lcInfo?.area }} кв. м</p>
             </div>
-            <div class="card-line">
+            <p class="card-title" style="border: none;">
+              Приборы учета
+            </p>
+            <div class="card-line" v-for="el in lcInfo?.devices">
 
-              <p class="name">Тип</p>
-              <p class="value">Частная</p>
+              <div class="card-list">
+                <div class="card-item">
+                  <p class="name">Прибор учета</p>
+                  <p class="value">{{ el?.number }}</p>
+                </div>
+              </div>
+              <div class="card-list">
+                <div class="card-item">
+                  <p class="name">Последнее показание ПУ</p>
+                  <p class="value">{{ el?.pok }}</p>
+                </div>
+              </div>
             </div>
+
             <div class="card-line" style="margin-bottom: 30px;">
 
               <p class="name">С учетом оплаты текущего периода </p>
-              <p class="value bold">Задолженность: {{ lcInfo?.peni }}</p>
+              <p class="value bold">Задолженность: {{ lcInfo?.saldo }}</p>
             </div>
           </div>
 
@@ -135,7 +136,8 @@
                 </ion-button> -->
                   </div>
                   <div class="modal-footer">
-                    <button class="btn" fill="clear" @click="deleteLcHandler(lcInfo?.lc).then(()=>setOpen(false))">Да</button>
+                    <button class="btn" fill="clear"
+                      @click="deleteLcHandler(lcInfo?.lc).then(() => setOpen(false))">Да</button>
                     <button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</button>
                   </div>
 
@@ -148,29 +150,63 @@
 
 
         <div class="accruals">
-          <ion-accordion-group>
+          <div class="spinner" v-show="loadingLcInfo">
+            <ion-spinner name="circles"></ion-spinner>
+          </div>
+          <ion-accordion-group  v-show="!loadingLcInfo">
             <ion-accordion value="first">
               <ion-item class="card accordion" slot="header" color="light">
                 <p class="accordion-title">
-                  Начисление «Электроснабжение (PE)» за Апрель 2023
+                  Начисление «Электроснабжение (PE)» за {{ moment(lcInfo?.invoices?.period).locale('ru').format('MMM YYYY') }}
                 </p>
               </ion-item>
 
 
               <div slot="content">
-                <div v-for="el in accruals">
+                
+                <div>
                   <div class="card" style="margin-bottom:10px">
-                    <p class="card-title">{{ el.name }}</p>
+                    <!-- <p class="card-title">{{ el.name }}</p> -->
+                    <!-- <div class="card-list">
+                      <div class="card-item">
+                        <p class="name">Расчетный период</p>
+                        <p class="value">{{ lcInfo?.invoices?.period }}</p>
+                      </div>
+                    </div> -->
                     <div class="card-list">
-                      <div class="card-item" v-for="el2 in el.data">
-                        <p class="name">{{ el2.name }}</p>
-                        <p class="value">{{ el2.value }}</p>
+                      <div class="card-item">
+                        <p class="name">Расчетный период</p>
+                        <p class="value">{{ moment(lcInfo?.invoices?.period).format('DD.MM.yyyy') }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Сальдо начало периода</p>
+                        <p class="value">{{ lcInfo?.invoices?.SALDON }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Сальдо конец периода</p>
+                        <p class="value">{{ lcInfo?.invoices?.SALDOK }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Сальдо конец периода</p>
+                        <p class="value">{{ lcInfo?.invoices?.SALDOK }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Корректировки</p>
+                        <p class="value">{{ lcInfo?.invoices?.korr }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Оплата</p>
+                        <p class="value">{{ lcInfo?.invoices?.oplata }}</p>
+                      </div>
+                      <div class="card-item">
+                        <p class="name">Вид услуги</p>
+                        <p class="value">{{ lcInfo?.invoices?.vid }}</p>
                       </div>
                     </div>
 
                     <div class="total">
-                      <p class="name">{{ el.total.name }}</p>
-                      <p class="value">{{ el.total.value }}</p>
+                      <p class="name">Начисления</p>
+                      <p class="value">{{ lcInfo?.invoices?.summa }}</p>
                     </div>
                   </div>
                 </div>
@@ -199,11 +235,13 @@ import { Storage } from '@ionic/storage'
 import { mapActions } from 'pinia';
 import { useLoginStore } from '../stores/login'
 import { useLcStore } from '../stores/lc'
+import moment from 'moment'
+import 'moment/dist/locale/ru';
 
 export default defineComponent({
   name: 'Main',
   components: {
-    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, ExploreContainer, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonModal, IonSpinner
+    IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, ExploreContainer, IonText, IonButton, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonModal, IonSpinner,
   },
 
   mounted() {
@@ -213,13 +251,14 @@ export default defineComponent({
       this.loadingLcs = false
       if (this.$pinia.state.value.lc.lcResponse?.status == true) {
         this.loadingLcInfo = true
-        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]).then(() => {
+        console.log(this.$pinia.state.value.lc.lcResponse?.data)
+        this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]?.lc_number).then(() => {
           this.loadingLcInfo = false
 
         })
       }
 
-      this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+      this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
         if (index === 0) {
           this.lcs.push({ lc: el, current: true })
 
@@ -237,21 +276,22 @@ export default defineComponent({
     changeTab(selected: any) {
       this.loadingLcInfo = true
       console.log(selected)
-      this.getLc(selected?.lc).then(() => {
+      this.getLc(selected).then(() => {
         console.log('selected', this.$pinia.state.value.lc?.lcInfoResponse)
         this.loadingLcInfo = false
 
       })
 
       this.lcs?.map((t: any) => {
-        t?.lc === selected?.lc ? t.current = true : t.current = false
+        t?.lc?.lc_number === selected ? t.current = true : t.current = false
       });
     },
     async deleteLcHandler(lc: any) {
-
+      let lcObj = this.lcs.find((e) => e?.lc?.lc_number == lc)
+      console.log()
       this.loadingLcs = true
-      this.deleteLc(lc).then(() => {
-      
+      this.deleteLc(lc?.lc?.lc_id).then(() => {
+
         this.loadingLcs = false
         if (this.$pinia.state.value.lc.lcResponse?.status == true) {
           this.loadingLcInfo = true
@@ -268,7 +308,6 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const isOpen = ref(false);
-
     const setOpen = (open: boolean) => {
       isOpen.value = open
     }
@@ -279,7 +318,7 @@ export default defineComponent({
 
     }
     return {
-      setOpen, remove, isOpen,
+      setOpen, remove, isOpen, moment
     }
   },
   computed: {

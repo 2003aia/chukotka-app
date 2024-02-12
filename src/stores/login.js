@@ -31,7 +31,7 @@ export const useLoginStore = defineStore({
     },
     actions: {
         async authUser(login, password) {
-            
+
             try {
                 await axios
                     .post(
@@ -41,14 +41,14 @@ export const useLoginStore = defineStore({
                             password: password
                         },
                     )
-                    .then(async(response) => {
+                    .then(async (response) => {
                         this.authResponse = response.data
-                        if(response.data.status == true) {
+                        if (response.data.status == true) {
                             const store = new Storage();
                             await store.create();
                             await store.set("token", JSON.stringify(response.data?.data?.token?.access_token));
                         }
-                        
+
                     });
             } catch (error) {
                 this.authError = error;
@@ -74,7 +74,7 @@ export const useLoginStore = defineStore({
                             password_confirm: data.password
                         },
                     )
-                    .then(async(response) => {
+                    .then(async (response) => {
                         const store = new Storage();
                         await store.create();
                         let token = await store.get("token");
@@ -132,7 +132,12 @@ export const useLoginStore = defineStore({
                             }
                         }
                     )
-                    .then((response) => (this.passRecoveryResponse = response.data));
+                    .then((response) => {
+                        this.passRecoveryResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+                    });
             } catch (error) {
                 this.passRecoveryError = error;
             }
@@ -142,7 +147,7 @@ export const useLoginStore = defineStore({
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
-            
+
             try {
                 await axios
                     .get(
@@ -153,14 +158,16 @@ export const useLoginStore = defineStore({
                             }
                         }
                     )
-                    .then(async(response) => {
+                    .then(async (response) => {
                         this.userResponse = response.data
-                        if(response.data.status == true) {
+                        if (response.data.status == true) {
                             const store = new Storage();
                             await store.create();
                             await store.set("user", JSON.stringify(response.data?.data));
+                        } else {
+                            this.$router.push('/auth')
                         }
-                       
+
                     });
             } catch (error) {
                 this.userError = error;
@@ -173,22 +180,25 @@ export const useLoginStore = defineStore({
             let tokenNew = JSON.parse(token)
             try {
                 await axios.post(
-                        `${apiUrl}edit`,
-                        data,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${tokenNew}`
-                            }
+                    `${apiUrl}edit`,
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${tokenNew}`
                         }
-                    )
-                    .then(async(response) => {
+                    }
+                )
+                    .then(async (response) => {
                         this.userResponse = response.data
-                        if(response.data.status == true) {
+                        if (response.data.status == true) {
                             const store = new Storage();
                             await store.create();
                             await store.set("user", JSON.stringify(response.data?.data));
+                        } else {
+                            // this.$router.push('/auth')
+
                         }
-                       
+
                     });
             } catch (error) {
                 this.userError = error;
@@ -201,22 +211,26 @@ export const useLoginStore = defineStore({
             let tokenNew = JSON.parse(token)
             try {
                 await axios.post(
-                        `${apiUrl}changepassword`,
-                        data,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${tokenNew}`
-                            }
+                    `${apiUrl}changepassword`,
+                    data,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${tokenNew}`
                         }
-                    )
-                    .then(async(response) => {
+                    }
+                )
+                    .then(async (response) => {
                         this.changePassResponse = response.data
                         /* if(response.data.status == true) {
                             const store = new Storage();
                             await store.create();
                             await store.set("user", JSON.stringify(response.data?.data));
                         } */
-                       
+                        if (s = response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+
+
                     });
             } catch (error) {
                 this.changePassError = error;

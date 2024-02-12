@@ -116,13 +116,54 @@
                     </div>
                 </div> -->
                 <div class="btns">
-                    <button class="btn">Скачать все документы</button>
-                    <button class="btn">Отправить все документы на E-mail</button>
+                    <p class="response" v-show="response">{{ response }}</p>
+                    <p class="errorText" v-show="errorText">{{ errorText }}</p>
+                    <button class="btn" @click="downloadAllHandler">
+                        <div class="spinner" v-show="loadingDownloadAll">
+                            <ion-spinner name="circles"></ion-spinner>
+                        </div>
+                        <span v-show="!loadingDownloadAll">
+                            Скачать все документы
+                        </span>
+                    </button>
+
+                    <button class="btn" @click="sendAllReceiptsHandler">
+                        <div class="spinner" v-show="loadingSendAll">
+                            <ion-spinner name="circles"></ion-spinner>
+                        </div>
+                        <span v-show="!loadingSendAll">
+                            Отправить все документы на E-mail
+                        </span>
+                    </button>
 
                 </div>
 
-
-                <div class="card">
+                <div class="spinner" v-show="loadingReceipts">
+                    <ion-spinner name="circles"></ion-spinner>
+                </div>
+                <div class="card" v-show="!loadingReceipts" v-for="el in receiptsArr" :key="el?.data?.id">
+                    <div class="card-list">
+                        <div class="card-line">
+                            <p class="name">Квитанция</p>
+                            <p class="value">№ {{ el?.data?.number }}</p>
+                        </div>
+                        <div class="card-line">
+                            <p class="name">Месяц</p>
+                            <div class="load">
+                                <p class="value">{{ (el?.data?.date) }}</p>
+                                <p class="load" @click="downloadHandler(el?.data?.id)">
+                                <div class="spinner" v-show="el?.loading">
+                                    <ion-spinner name="circles"></ion-spinner>
+                                </div>
+                                <span v-show="!el?.loading">
+                                    Скачать <img src="../assets/download.svg" alt="download">
+                                </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="card">
                     <div class="card-list">
                         <div class="card-line">
                             <p class="name">Квитанция</p>
@@ -136,22 +177,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card">
-                    <div class="card-list">
-                        <div class="card-line">
-                            <p class="name">Квитанция</p>
-                            <p class="value">№ 12345678901</p>
-                        </div>
-                        <div class="card-line">
-                            <p class="name">Месяц</p>
-                            <div class="load">
-                                <p class="value">Апрель 2023</p>
-                                <p class="load">Скачать <img src="../assets/download.svg" alt="download"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div> -->
 
             </div>
         </ion-content>
@@ -159,18 +185,36 @@
 </template>
     
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonModal, } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonModal, IonSpinner } from '@ionic/vue';
 import ExploreContainer from '@/components/ExploreContainer.vue';
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router'
+import { mapActions } from 'pinia'
+import { useReceiptStore } from '../stores/receipts'
+import { useLcStore } from '../stores/lc'
+import moment from 'moment';
 
 export default defineComponent({
     name: 'DownloadDocs',
     components: {
-        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonModal,
+        IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonModal, IonSpinner
+    },
+    computed: {
+        receipts() {
+            return this.$pinia.state.value?.receipt?.receiptsResponse?.data
+        }
     },
     data() {
         return {
+            receiptsArr: [],
+            lcs: [],
+            loadingSendAll: false,
+            loadingReceipts: false,
+            loadingDownloadAll: false,
+            loadingLcs: false,
+            loadingDownload: false,
+            response: '',
+            errorText: '',
             from: '',
             to: '',
             year: new Date().getFullYear(),
@@ -194,7 +238,71 @@ export default defineComponent({
             currentMonth: new Date().getMonth(),
         }
     },
+    mounted() {
+        this.loadingLcs = true
+        this.getLcs().then(() => {
+            this.loadingLcs = false
+            this.$pinia.state.value?.lc?.lcResponse?.data?.lcs?.forEach((el: any) => {
+                this.lcs.push(el?.lc_id)
+            })
+        })
+        this.loadingReceipts = true
+        this.getReceipts().then(() => {
+            this.loadingReceipts = false
+            this.$pinia.state.value?.receipt?.receiptsResponse?.data?.forEach((el: any) => {
+                this.receiptsArr.push({ error: '', loading: false, data: el, })
+            })
+            console.log(this.$pinia.state.value?.receipt?.receiptsResponse)
+        })
+    },
     methods: {
+        ...mapActions(useReceiptStore, ['sendAllReceiptsToEmail', 'downloadAllReceipts', 'getReceipts', 'downloadReceipt']),
+        ...mapActions(useLcStore, ['getLcs']),
+        downloadHandler(id: any) {
+            this.loadingDownload = true
+            this.receiptsArr?.map((t: any) => {
+                t?.data?.id === id ? t.loading = true : t.loading = false
+            });
+            this.downloadReceipt({ document_id: id }).then(() => {
+                this.loadingDownload = false
+                this.receiptsArr?.map((t: any) => {
+                    t?.data?.id === id ? t.loading = false : t.loading = false
+                });
+                if (this.$pinia.state.value?.receipt?.downloadResponse?.status == true) {
+                    window.open(this.$pinia.state.value?.receipt?.downloadResponse?.data?.file, '_system')
+                    // this.response = this.$pinia.state.value?.receipt?.downloadAllResponse?.data
+                } else {
+                    this.receiptsArr?.map((t: any) => {
+                        t?.data?.id === id ? t.error = this.$pinia.state.value?.receipt?.downloadResponse?.data : t.error = ''
+                    });
+                }
+            })
+        },
+        downloadAllHandler() {
+            this.loadingDownloadAll = true
+            this.downloadAllReceipts({ document_ids: this.lcs }).then(() => {
+                this.loadingDownloadAll = false
+                if (this.$pinia.state.value?.receipt?.downloadAllResponse?.status == true) {
+                    window.open(this.$pinia.state.value?.receipt?.downloadAllResponse?.data, '_system')
+                    // this.response = this.$pinia.state.value?.receipt?.downloadAllResponse?.data
+                } else {
+                    this.errorText = this.$pinia.state.value?.receipt?.downloadAllResponse?.data
+                }
+            })
+        },
+        sendAllReceiptsHandler() {
+
+            this.loadingSendAll = true
+            this.sendAllReceiptsToEmail({ document_ids: this.lcs }).then(() => {
+                this.loadingSendAll = false
+                if (this.$pinia.state.value?.receipt?.sendAllResponse?.status == false) {
+                    this.errorText = this.$pinia.state.value?.receipt?.sendAllResponse?.data
+                } else {
+                    this.response = this.$pinia.state.value?.receipt?.sendAllResponse?.data
+
+                }
+            })
+        },
         setMonth(el: string, el2: string) {
             if (el2 == 'from') {
                 this.$data.from = `${el} ${this.$data.year}`
@@ -220,7 +328,8 @@ export default defineComponent({
             }
         }
     },
-    ionViewWillEnter() {
+    ionViewDidEnter() {
+
         this.$data.from = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.year}`
         this.$data.to = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.yearTo}`
 
@@ -243,6 +352,7 @@ export default defineComponent({
             setOpenTo,
             isOpen,
             isOpenTo,
+            moment
         }
     }
 
@@ -250,6 +360,10 @@ export default defineComponent({
 </script>
   
 <style scoped>
+.errorText {
+    margin-top: 0;
+}
+
 .container {
     padding-top: 24px;
 }
@@ -261,6 +375,11 @@ export default defineComponent({
 .load {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.load span {
+    display: flex;
     align-items: center;
 }
 

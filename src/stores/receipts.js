@@ -1,18 +1,21 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
-const apiUrl = "https://crazy-haslett.89-253-229-86.plesk.page/api/mob/notice/";
+const apiUrl = "https://crazy-haslett.89-253-229-86.plesk.page/api/mob/document/";
 
 
 
-export const useNotifStore = defineStore({
-    id: "notif",
+export const useReceiptStore = defineStore({
+    id: "receipt",
     state: () => ({
-        notifResponse: null,
-        notifError: null,
-        subscribeResponse: null,
-        subscribeError: null,
-
+        receiptsResponse: null,
+        receiptsError: null,
+        sendAllResponse: null,
+        sendAllError: null,
+        downloadAllResponse: null,
+        downloadAllError: null,
+        downloadResponse: null,
+        downloadError: null,
     }),
     getters: {
         getPostsPerAuthor: (state) => {
@@ -22,7 +25,7 @@ export const useNotifStore = defineStore({
     },
     actions: {
 
-        async getNotif() {
+        async getReceipts() {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -30,7 +33,7 @@ export const useNotifStore = defineStore({
             try {
                 await axios
                     .get(
-                        `${apiUrl}get`,
+                        `${apiUrl}get/receipts`,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -38,24 +41,25 @@ export const useNotifStore = defineStore({
                         }
                     )
                     .then((response) => {
-                        this.notifResponse = response.data
+                        this.receiptsResponse = response.data
                         if (response.data?.status == false) {
                             // this.$router.push('/auth')
                         }
                     });
             } catch (error) {
-                this.notifError = error;
+                this.receiptsError = error;
             }
         },
-        async subscribe() {
+        async downloadReceipt(data) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
             try {
                 await axios
-                    .get(
-                        `${apiUrl}subscribe`,
+                    .post(
+                        `${apiUrl}download`,
+                        data,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -64,28 +68,27 @@ export const useNotifStore = defineStore({
                     )
                     .then(async (response) => {
                         if (response.data?.status == true) {
-                            const store = new Storage();
-                            await store.create();
-                            await store.set("subscribe", true);
+                            console.log('sendAll')
                         } else {
                             // this.$router.push('/auth')
                         }
 
-                        this.subscribeResponse = response.data
+                        this.downloadResponse = response.data
                     });
             } catch (error) {
-                this.subscribeError = error;
+                this.downloadError = error;
             }
         },
-        async unsubscribe() {
+        async downloadAllReceipts(data) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
             try {
                 await axios
-                    .get(
-                        `${apiUrl}unsubscribe`,
+                    .post(
+                        `${apiUrl}archieve`,
+                        data,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -94,17 +97,46 @@ export const useNotifStore = defineStore({
                     )
                     .then(async (response) => {
                         if (response.data?.status == true) {
-                            const store = new Storage();
-                            await store.create();
-                            await store.set("subscribe", false);
+                            console.log('sendAll')
                         } else {
                             // this.$router.push('/auth')
                         }
-                        this.subscribeResponse = response.data
+
+                        this.downloadAllResponse = response.data
                     });
             } catch (error) {
-                this.subscribeError = error;
+                this.downloadAllError = error;
             }
         },
+        async sendAllReceiptsToEmail(data) {
+            const store = new Storage();
+            await store.create();
+            let token = await store.get("token");
+            let tokenNew = JSON.parse(token)
+            try {
+                await axios
+                    .post(
+                        `${apiUrl}send`,
+                        data,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${tokenNew}`
+                            }
+                        }
+                    )
+                    .then(async (response) => {
+                        if (response.data?.status == true) {
+                            console.log('sendAll')
+                        } else {
+                            // this.$router.push('/auth')
+                        }
+
+                        this.sendAllResponse = response.data
+                    });
+            } catch (error) {
+                this.sendAllError = error;
+            }
+        },
+
     },
 });

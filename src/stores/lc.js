@@ -5,7 +5,6 @@ const apiUrl = "https://crazy-haslett.89-253-229-86.plesk.page/api/mob/lc/";
 const apiUrl2 = "https://crazy-haslett.89-253-229-86.plesk.page/api/mob/meter/send/";
 
 
-
 export const useLcStore = defineStore({
     id: "lc",
     state: () => ({
@@ -30,6 +29,7 @@ export const useLcStore = defineStore({
     },
     actions: {
         async getLcs() {
+
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -44,17 +44,20 @@ export const useLcStore = defineStore({
                             }
                         }
                     )
-                    .then(async(response) => { 
+                    .then(async (response) => {
                         const store = new Storage();
                         await store.create();
                         await store.set("lc", JSON.stringify(response.data?.data));
-                        this.lcResponse = response.data 
+                        this.lcResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
                     });
             } catch (error) {
                 this.lcError = error;
             }
         },
-        async getLc(lc){
+        async getLc(lc) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -69,14 +72,17 @@ export const useLcStore = defineStore({
                             }
                         }
                     )
-                    .then(async(response) => { 
-                        this.lcInfoResponse = response.data 
+                    .then(async (response) => {
+                        this.lcInfoResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
                     });
             } catch (error) {
                 this.lcInfoError = error;
             }
         },
-        async addIndice(lc){
+        async addIndice(lc) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -91,17 +97,20 @@ export const useLcStore = defineStore({
                             }
                         }
                     )
-                    .then(async(response) => { 
+                    .then(async (response) => {
                         /* const store = new Storage();
                         await store.create();
                         await store.set("lc", JSON.stringify(response.data?.data)); */
-                        this.addIndiceResponse = response.data 
+                        this.addIndiceResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
                     });
             } catch (error) {
                 this.addIndiceError = error;
             }
         },
-        async deleteLc(lc){
+        async deleteLc(lc) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -110,24 +119,27 @@ export const useLcStore = defineStore({
                 await axios
                     .post(
                         `${apiUrl}delete`,
-                        {lc_id: lc},
+                        { lc_id: lc },
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
                             }
                         }
                     )
-                    .then(async(response) => { 
+                    .then(async (response) => {
                         /* const store = new Storage();
                         await store.create();
                         await store.set("lc", JSON.stringify(response.data?.data)); */
-                        this.deleteLcResponse = response.data 
+                        this.deleteLcResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
                     });
             } catch (error) {
                 this.deleteLcError = error;
             }
         },
-        async addLc(data){
+        async addLc(data) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
@@ -143,11 +155,14 @@ export const useLcStore = defineStore({
                             }
                         }
                     )
-                    .then(async(response) => { 
+                    .then(async (response) => {
                         /* const store = new Storage();
                         await store.create();
                         await store.set("lc", JSON.stringify(response.data?.data)); */
-                        this.addLcResponse = response.data 
+                        this.addLcResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
                     });
             } catch (error) {
                 this.addLcError = error;
@@ -168,11 +183,17 @@ export const useLcStore = defineStore({
                             }
                         }
                     )
-                    .then((response) => (this.paymentsResponse = response.data));
+                    .then((response) => {
+                        this.paymentsResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+                    });
             } catch (error) {
                 this.paymentsError = error;
             }
         },
+
 
     },
 });

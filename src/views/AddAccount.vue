@@ -58,10 +58,13 @@
 
                 </ion-text>
                 <div class="sad">
-                    <Vue3Lottie :animationData="SadFace" :height="70" :width="70" />
+                    <img style="width: 140px;" src="../assets/sad.gif" alt="">
+
+                    <!-- <Vue3Lottie :animationData="SadFace" :height="70" :width="70" /> -->
                 </div>
 
             </div>
+            
         </ion-content>
         <ion-footer class="ion-no-border">
             <div class="container">
@@ -82,7 +85,7 @@
 <script lang="ts">
 import { IonPage, IonContent, IonText, IonFooter, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import SadFace from '../assets/sad.json'
+// import SadFace from '../assets/sad.json'
 import { mapActions } from 'pinia'
 import { useLcStore } from '../stores/lc'
 
@@ -91,7 +94,7 @@ import { useLcStore } from '../stores/lc'
 export default defineComponent({
     name: 'AddAcc',
     components: {
-        IonPage, IonContent, IonText, IonFooter, IonSpinner, SadFace
+        IonPage, IonContent, IonText, IonFooter, IonSpinner,
     },
     methods: {
         ...mapActions(useLcStore, ['addLc']),
@@ -137,7 +140,6 @@ export default defineComponent({
         return {
             show: true,
             error: false,
-            SadFace,
             city: '',
             street: '',
             house: '',
