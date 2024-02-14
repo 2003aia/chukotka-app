@@ -7,12 +7,14 @@
         <img class="logo" src="../assets/logo.svg" alt="logo" />
         <div class="input-wrapper">
 
-          <input :value="login" v-on:change="(e)=>login = e.target.value" class="input" required />
+          <input :value="login" v-on:change="(e) => login = e.target.value" class="input" :class="[errorText && 'error']"
+            required />
           <label>Лицевой счет</label>
         </div>
 
         <div class="input-wrapper">
-          <input :value="password" v-on:change="(e)=>password = e.target.value" class="input" ref="passAuth" required type="password" />
+          <input :value="password" v-on:change="(e) => password = e.target.value" class="input"
+            :class="[errorText && 'error']" ref="passAuth" required type="password" />
           <label>Пароль</label>
           <div @click="passToggle">
             <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
@@ -47,8 +49,8 @@
 <script lang="ts">
 import { IonPage, IonContent, IonFooter, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import {mapActions} from 'pinia'
-import {useLoginStore} from '../stores/login'
+import { mapActions } from 'pinia'
+import { useLoginStore } from '../stores/login'
 
 export default defineComponent({
   name: 'Auth',
@@ -64,20 +66,27 @@ export default defineComponent({
       loadingAuth: false,
     }
   },
-  
+  ionViewDidLeave() {
+    this.errorText = ''
+  },
   methods: {
     ...mapActions(useLoginStore, ["authUser",]),
-    authUserHandler(login: any, password: any){
-      this.loadingAuth = true
-      this.authUser(login, password).then(()=>{
-        this.loadingAuth = false
-        if(this.$pinia.state.value?.login.authResponse?.status == true) {
-          this.$router.push('/tabs')
-        } else {
-          this.errorText = this.$pinia.state.value?.login.authResponse?.data
-        }
-        console.log('authUser response:',this.$pinia.state.value?.login.authResponse)
-      })
+    authUserHandler(login: any, password: any) {
+      if (login.length > 0 && password.length > 0) {
+
+        this.loadingAuth = true
+        this.authUser(login, password).then(() => {
+          this.loadingAuth = false
+          if (this.$pinia.state.value?.login.authResponse?.status == true) {
+            this.$router.push('/tabs')
+          } else {
+            this.errorText = this.$pinia.state.value?.login.authResponse?.data
+          }
+          console.log('authUser response:', this.$pinia.state.value?.login.authResponse)
+        })
+      } else {
+        this.errorText = 'Заполните все поля!'
+      }
 
     },
     passToggle() {

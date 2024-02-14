@@ -10,7 +10,8 @@ export const useAppealsStore = defineStore({
     state: () => ({
         ticketResponse: null,
         ticketError: null,
-
+        createResponse: null,
+        createError: null,
 
     }),
     getters: {
@@ -46,15 +47,16 @@ export const useAppealsStore = defineStore({
                 this.ticketError = error;
             }
         },
-        async followNotif() {
+        async createTicket(data) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
             try {
                 await axios
-                    .get(
-                        `${apiUrl}get`,
+                    .post(
+                        `${apiUrl}create`,
+                        data,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -62,13 +64,13 @@ export const useAppealsStore = defineStore({
                         }
                     )
                     .then((response) => {
-                        this.notifResponse = response.data
+                        this.createResponse = response.data
                         if (response.data?.status == false) {
                             this.$router.push('/auth')
                         }
                     });
             } catch (error) {
-                this.notifError = error;
+                this.createError = error;
             }
         },
     },

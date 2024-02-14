@@ -70,13 +70,13 @@
           </div>
         </div>
 
-        <div class="card acc-info">
-
-
-          <div class="spinner" v-show="loadingLcInfo">
+        <div class="card acc-info" v-show="loadingLcInfo">
+          <div class="spinner">
             <ion-spinner name="circles"></ion-spinner>
           </div>
-          <div class="card-list" v-show="!loadingLcInfo">
+        </div>
+        <div class="card acc-info" v-show="!loadingLcInfo">
+          <div class="card-list">
             <div class="card-line">
               <p class="name">Лицевой счет</p>
               <p class="value">№ {{ lcInfo?.lc }}</p>
@@ -117,17 +117,20 @@
           </div>
 
           <div class="btns">
-            <button class="btn" @click="$router.push('/tabs/indices')">Передать показания</button>
+            <button class="btn" @click="$router.push({path: '/tabs/indices', name: 'Показания', query: {link: lcInfo?.lc}})">Передать показания</button>
             <button class="btn-outline black" @click="setOpen(true)">Удалить</button>
             <ion-modal :is-open="isOpen" mode="ios">
               <ion-content>
                 <div class="modal-wrapper">
                   <div class="modal-header">
                     <ion-text>
-                      <p class="modal-text">Вы точно хотите
+                      <p class="modal-text" v-show="deleted == false">Вы точно хотите
                         удалить Лицевой счет?</p>
+                      <p class="modal-text" v-show="deleted == true">
+                        {{ response }}
+                      </p>
                     </ion-text>
-                    <img @click="setOpen(false)" aria-hidden="true" src="../assets/close.svg" alt="close">
+                    <img @click="()=>{setOpen(false); deleted = false}" aria-hidden="true" src="../assets/close.svg" alt="close">
 
 
                     <!-- <ion-button @click="setOpen(false)" class="close" size="small" shape="round" fill="clear"
@@ -135,9 +138,20 @@
                   <ion-icon aria-hidden="true" size="large" :icon="closeOutline"></ion-icon>
                 </ion-button> -->
                   </div>
-                  <div class="modal-footer">
-                    <button class="btn" fill="clear"
-                      @click="deleteLcHandler(lcInfo?.lc).then(() => setOpen(false))">Да</button>
+                  <div class="modal-footer" v-show="deleted == true">
+                    <button class="btn-outline" fill="clear" @click="()=>{setOpen(false); deleted = false}">Выйти</button>
+
+                  </div>
+                  <div class="modal-footer" v-show="deleted == false">
+                    <p class="errorText" v-show="errorText">{{ errorText }}</p>
+                    <button class="btn" fill="clear" @click="deleteLcHandler(lcInfo?.lc)">
+                      <div class="spinner" style="margin-bottom: 0;" v-show="loadingDel">
+                        <ion-spinner name="circles"></ion-spinner>
+                      </div>
+                      <span v-show="!loadingDel">
+                        Да
+                      </span>
+                    </button>
                     <button class="btn-outline" fill="clear" @click="setOpen(false)">Нет</button>
                   </div>
 
@@ -153,17 +167,18 @@
           <div class="spinner" v-show="loadingLcInfo">
             <ion-spinner name="circles"></ion-spinner>
           </div>
-          <ion-accordion-group  v-show="!loadingLcInfo">
+          <ion-accordion-group v-show="!loadingLcInfo">
             <ion-accordion value="first">
               <ion-item class="card accordion" slot="header" color="light">
                 <p class="accordion-title">
-                  Начисление «Электроснабжение (PE)» за {{ moment(lcInfo?.invoices?.period).locale('ru').format('MMM YYYY') }}
+                  Начисление «Электроснабжение (PE)» за
+                  {{ moment(lcInfo?.invoices?.period).locale('ru').format('MMM YYYY') }}
                 </p>
               </ion-item>
 
 
               <div slot="content">
-                
+
                 <div>
                   <div class="card" style="margin-bottom:10px">
                     <!-- <p class="card-title">{{ el.name }}</p> -->
@@ -186,10 +201,7 @@
                         <p class="name">Сальдо конец периода</p>
                         <p class="value">{{ lcInfo?.invoices?.SALDOK }}</p>
                       </div>
-                      <div class="card-item">
-                        <p class="name">Сальдо конец периода</p>
-                        <p class="value">{{ lcInfo?.invoices?.SALDOK }}</p>
-                      </div>
+
                       <div class="card-item">
                         <p class="name">Корректировки</p>
                         <p class="value">{{ lcInfo?.invoices?.korr }}</p>
@@ -287,18 +299,42 @@ export default defineComponent({
       });
     },
     async deleteLcHandler(lc: any) {
+      this.deleted = false
+      this.loadingDel = true
       let lcObj = this.lcs.find((e) => e?.lc?.lc_number == lc)
-      console.log()
       this.loadingLcs = true
-      this.deleteLc(lc?.lc?.lc_id).then(() => {
+      this.deleteLc(lcObj?.lc?.lc_id).then(() => {
+        this.loadingDel = false
+        if (this.$pinia.state.value.lc.deleteLcResponse?.status == true) {
+          this.deleted = true
+          this.loadingLcs = true
+          this.response = this.$pinia.state.value.lc.deleteLcResponse?.data
+          this.getLcs().then(() => {
 
-        this.loadingLcs = false
-        if (this.$pinia.state.value.lc.lcResponse?.status == true) {
-          this.loadingLcInfo = true
-          this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]).then(() => {
-            this.loadingLcInfo = false
+            this.loadingLcs = false
+
+            if (this.$pinia.state.value.lc.lcResponse?.status == true) {
+              this.loadingLcInfo = true
+              console.log(this.$pinia.state.value.lc.lcResponse?.data)
+              this.getLc(this.$pinia.state.value.lc.lcResponse?.data?.lcs[0]?.lc_number).then(() => {
+                this.loadingLcInfo = false
+
+              })
+            }
+
+            this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
+              if (index === 0) {
+                this.lcs.push({ lc: el, current: true })
+
+              } else {
+                this.lcs.push({ lc: el, current: false })
+                // console.log(this.lcs)
+              }
+            });
 
           })
+        } else {
+          this.errorText = this.$pinia.state.value.lc.deleteLcResponse?.data
         }
 
         console.log(this.$pinia.state.value.lc.deleteLcResponse)
@@ -337,146 +373,11 @@ export default defineComponent({
       lcs: [],
       loadingLcInfo: false,
       loadingLcs: false,
-      accruals: [
-        {
-          name: 'Акт. Э/Э (ночь)',
-          total: {
-            name: 'Итого',
-            value: '0.00'
-          },
-          data: [
-            {
-              name: 'Ед.изм.',
-              value: 'кВт.ч'
-            },
-            {
-              name: 'Тариф',
-              value: '5.13'
-            },
-            {
-              name: 'Объем',
-              value: '49'
-            },
-            {
-              name: 'К оплате',
-              value: '1 280.76'
-            },
-            {
-              name: 'Начислено',
-              value: '251.37'
-            },
-            {
-              name: 'Оплачено',
-              value: '4 956,66'
-            },
-            {
-              name: 'Перерасчет',
-              value: '0.00'
-            },
-
-          ]
-        },
-        {
-          name: 'Акт. Э/Э (день)',
-          total: {
-            name: 'Итого',
-            value: '0.00'
-          },
-          data: [
-            {
-              name: 'Ед.изм.',
-              value: 'кВт.ч'
-            },
-            {
-              name: 'Тариф',
-              value: '5.13'
-            },
-            {
-              name: 'Объем',
-              value: '49'
-            },
-            {
-              name: 'К оплате',
-              value: '1 280.76'
-            },
-            {
-              name: 'Начислено',
-              value: '251.37'
-            },
-            {
-              name: 'Оплачено',
-              value: '4 956,66'
-            },
-            {
-              name: 'Перерасчет',
-              value: '0.00'
-            },
-          ]
-        },
-        {
-          name: 'Пени',
-          total: {
-            name: 'Итого',
-            value: '0.00'
-          },
-          data: [
-            {
-              name: 'Ед.изм.',
-              value: 'Руб'
-            },
-            {
-              name: 'Тариф',
-              value: '5.13'
-            },
-            {
-              name: 'Объем',
-              value: '49'
-            },
-            {
-              name: 'К оплате',
-              value: '1 280.76'
-            },
-            {
-              name: 'Начислено',
-              value: '251.37'
-            },
-            {
-              name: 'Оплачено',
-              value: '4 956,66'
-            },
-            {
-              name: 'Перерасчет',
-              value: '0.00'
-            },
-          ]
-        },
-        {
-          name: 'Итого',
-          total: {
-            name: 'Итого к оплате',
-            value: '0.00'
-          },
-          data: [
-            {
-              name: 'К оплате',
-              value: '1 280.76'
-            },
-            {
-              name: 'Начислено',
-              value: '251.37'
-            },
-            {
-              name: 'Оплачено',
-              value: '4 956,66'
-            },
-            {
-              name: 'Перерасчет',
-              value: '0.00'
-            },
-
-          ]
-        },
-      ]
+      loadingDel: false,
+      deleted: false,
+      errorText: '',
+      response: '',
+      
     }
   }
 })

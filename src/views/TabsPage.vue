@@ -29,7 +29,13 @@
             <ion-menu-toggle>
               <ion-item class="menu-item" router-link="/tabs/accrualAndPayment">
                 <img class="menu-icon" src="../assets/indices.svg" slot="start" />
-                <ion-label>Начисление и оплата </ion-label>
+                <ion-label>История начислений<!-- Начисление и оплата --> </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+            <ion-menu-toggle>
+              <ion-item class="menu-item" router-link="/tabs/paymentsHistory">
+                <img class="menu-icon" src="../assets/pay-active.svg" slot="start" />
+                <ion-label>Показания и платежи</ion-label>
               </ion-item>
             </ion-menu-toggle>
             <ion-menu-toggle>

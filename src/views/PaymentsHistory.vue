@@ -8,7 +8,7 @@
                     </ion-buttons>
                     <ion-title>
                         <span class="title">
-                            Начисление и оплата
+                            Показания и платежи
                         </span>
                     </ion-title>
 
@@ -39,100 +39,102 @@
                         <div class="spinner" v-show="loadingLcs">
                             <ion-spinner name="circles"></ion-spinner>
                         </div>
-                        <div v-show="!loadingLcs" class="acc-item" v-for="el in lcs" @click="changeTab(el)" :key="el"
-                            :href="el.lc" :class="[el?.current && 'active']">
-                            <div :id="el">
-                                № {{ el.lc }}
-                            </div>
+                        <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)"
+                            :key="el" :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
+                            № {{ el.lc?.lc_number }}
                         </div>
                     </div>
                 </div>
 
                 <div class="line"></div>
+                <div class="spinner" v-show="loadingPayments">
+                    <ion-spinner name="circles"></ion-spinner>
+                </div>
+                <div v-show="!loadingPayments">
 
-                <p class="input-text" style="margin-bottom:15px;">Период</p>
-                <div class="input-date-wrapper">
-                    <div class="input-date">
-                        {{ from }}
-                        <img @click="setOpen(true)" src="../assets/calendar.svg" alt="">
-                    </div>
-                    <ion-modal :is-open="isOpen" mode="ios">
-                        <ion-content>
-                            <div class="modal-wrapper date-picker">
-                                <div class="date-picker-header">
-                                    {{ year }}
+                    <p class="input-text" style="margin-bottom:15px;">Период</p>
+                    <div class="input-date-wrapper">
+                        <div class="input-date">
+                            {{ from }}
+                            <img @click="setOpen(true)" src="../assets/calendar.svg" alt="">
+                        </div>
+                        <ion-modal :is-open="isOpen" mode="ios">
+                            <ion-content>
+                                <div class="modal-wrapper date-picker">
+                                    <div class="date-picker-header">
+                                        {{ year }}
 
-                                    <div class="date-year-toggle">
-                                        <img @click="setMinus('from')" src="../assets/date-prev.svg">
-                                        <img @click="setPlus('from')" class="next" src="../assets/date-next.svg">
+                                        <div class="date-year-toggle">
+                                            <img @click="setMinus('from')" src="../assets/date-prev.svg">
+                                            <img @click="setPlus('from')" class="next" src="../assets/date-next.svg">
+                                        </div>
+                                    </div>
+                                    <div class="date-picker-list">
+                                        <div class="date-picker-item" v-for="el in monthList">
+                                            <div @click="setMonth(el, 'from'), setOpen(false)">
+                                                {{ el }}
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="date-picker-list">
-                                    <div class="date-picker-item" v-for="el in monthList">
-                                        <div @click="setMonth(el, 'from'), setOpen(false)">
+                            </ion-content>
+                        </ion-modal>
+
+                        <div class="input-date">
+                            {{ to }}
+                            <img @click="setOpenTo(true)" src="../assets/calendar.svg" alt="">
+                        </div>
+                        <ion-modal :is-open="isOpenTo" mode="ios">
+                            <ion-content>
+                                <div class="modal-wrapper date-picker">
+                                    <div class="date-picker-header">
+                                        {{ yearTo }}
+                                        <div class="date-year-toggle">
+                                            <img @click="setMinus('to')" src="../assets/date-prev.svg">
+                                            <img @click="setPlus('to')" class="next" src="../assets/date-next.svg">
+                                        </div>
+                                    </div>
+                                    <div class="date-picker-list">
+                                        <div @click="setMonth(el, 'to'), setOpenTo(false)" class="date-picker-item"
+                                            v-for="el in monthList">
                                             {{ el }}
                                         </div>
-
                                     </div>
                                 </div>
-                            </div>
-                        </ion-content>
-                    </ion-modal>
-
-                    <div class="input-date">
-                        {{ to }}
-                        <img @click="setOpenTo(true)" src="../assets/calendar.svg" alt="">
+                            </ion-content>
+                        </ion-modal>
                     </div>
-                    <ion-modal :is-open="isOpenTo" mode="ios">
-                        <ion-content>
-                            <div class="modal-wrapper date-picker">
-                                <div class="date-picker-header">
-                                    {{ yearTo }}
-                                    <div class="date-year-toggle">
-                                        <img @click="setMinus('to')" src="../assets/date-prev.svg">
-                                        <img @click="setPlus('to')" class="next" src="../assets/date-next.svg">
-                                    </div>
-                                </div>
-                                <div class="date-picker-list">
-                                    <div @click="setMonth(el, 'to'), setOpenTo(false)" class="date-picker-item"
-                                        v-for="el in monthList">
-                                        {{ el }}
-                                    </div>
-                                </div>
-                            </div>
-                        </ion-content>
-                    </ion-modal>
-                </div>
 
-                <div class="card">
+                    <div class="card">
 
-                    <div class="spinner" v-show="loadingPayments">
-                        <ion-spinner name="circles"></ion-spinner>
-                    </div>
-                    <div v-show="!loadingPayments" class="block" v-for="el in /*  accrualsInfo */paymentsArray">
-                        <p class="card-title">{{ el.period }}</p>
-                        <div class="card-list">
-                            <div class="card-item">
-                                <p class="name">Начислено</p>
-                                <p class="value">{{ el.summa }}</p>
-                            </div>
-                            <div class="card-item">
-                                <p class="name">К оплате на начало месяца</p>
-                                <p class="value">{{ el.due }}</p>
-                            </div>
-                            <div class="card-item">
-                                <p class="name">Оплачено</p>
-                                <p class="value">{{ el.paid }}</p>
-                            </div>
-                            <div class="card-item">
-                                <p class="name">К оплате</p>
-                                <p class="value">{{ el.toPay }}</p>
+
+                        <div class="block" v-for="el in /*  accrualsInfo */payments">
+                            <p class="card-title">{{ moment(el?.period).format('MMMM yyyy') }}</p>
+                            <div class="card-list">
+                                <div class="card-item">
+                                    <p class="name">Тип данных</p>
+                                    <p class="value">Платежи</p>
+                                </div>
+                                <div class="card-item">
+                                    <p class="name">Дата совершения платежа</p>
+                                    <p class="value">{{ moment(el?.period).format('DD.MM.yyyy') }}</p>
+                                </div>
+                                <div class="card-item">
+                                    <p class="name">Cумма оплаты</p>
+                                    <p class="value">{{ el?.summa }}</p>
+                                </div>
+
+                                <div class="card-item">
+                                    <p class="name">Номер прибора</p>
+                                    <p class="value">{{ el?.ctype }}</p>
+                                </div>
                             </div>
                         </div>
+
+
+
                     </div>
-
-
-
                 </div>
 
             </div>
@@ -148,15 +150,17 @@ import { defineComponent, ref } from 'vue';
 import { mapActions } from 'pinia';
 import { Storage } from '@ionic/storage';
 import { useLcStore } from '../stores/lc'
+import moment from 'moment'
 
 export default defineComponent({
-    name: 'AccrualAndPayment',
+    name: 'PaymentsHistory',
     components: {
         IonPage, IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainer, IonMenuButton, IonButtons, IonText, IonModal, IonSpinner
     },
     data() {
         return {
             lcs: [],
+            payments: [],
             loadingPayments: false,
             loadingLcs: false,
             user: {
@@ -166,6 +170,8 @@ export default defineComponent({
             },
             from: '',
             to: '',
+            from2: '',
+            to2: '',
             year: new Date().getFullYear(),
             yearTo: new Date().getFullYear(),
             monthList: [
@@ -208,20 +214,66 @@ export default defineComponent({
         ...mapActions(useLcStore, ['getPayments', 'getLcs']),
         changeTab(selected: any) {
             this.loadingPayments = true
-            this.getPayments(selected?.lc).then(() => {
+            this.getPayments(selected).then(() => {
                 console.log('selected', this.$pinia.state.value.lc?.paymentsResponse)
                 this.loadingPayments = false
 
             })
 
             this.lcs?.map((t: any) => {
-                t?.lc === selected?.lc ? t.current = true : t.current = false
+                t?.lc?.lc_number === selected ? t.current = true : t.current = false
             });
         },
         setMonth(el: string, el2: string) {
+
             if (el2 == 'from') {
+                let monthArr: any = []
+                let monthNumber = 1
+                this.monthList.map((month, id) => {
+                    monthArr.push({ id: id + 1, name: month })
+                })
+                monthArr.find((e: any) => {
+                    if (e?.name == el) {
+                        monthNumber = e?.id
+                    }
+                })
+                this.from2 = `1.${monthNumber}.${this.year}`
+                this.payments = []
+                let newDate = `1.${monthNumber}.${this.year}`
+
+                let toNew = this.to2.length > 0 ? moment(this.to2) : moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`)
+                console.log(moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`))
+                this.paymentsArray?.map((item: any) => {
+                    if (moment(moment(item?.period).format('D.M.yyyy')) <= toNew && moment(moment(item?.period).format('D.M.yyyy')) >= moment(newDate)) {
+                        this.payments.push(item)
+                    }
+                })
+
                 this.$data.from = `${el} ${this.$data.year}`
             } else {
+                this.payments = []
+                let monthArr: any = []
+                let monthNumber = 1
+                this.monthList.map((month, id) => {
+                    monthArr.push({ id: id + 1, name: month })
+                })
+                monthArr.find((e: any) => {
+                    if (e?.name == el) {
+                        monthNumber = e?.id
+                    }
+                })
+                this.to2 = `1.${monthNumber}.${this.yearTo}`
+                let newDate = new Date(`1.${monthNumber}.${this.yearTo}`)
+                let fromNew = this.from2.length > 0 ? moment(this.from2) : moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`)
+
+                this.paymentsArray?.map((item: any) => {
+
+                    if (moment(moment(item?.period).format('D.M.yyyy')) >= fromNew && moment(moment(item?.period).format('D.M.yyyy')) <= moment(newDate)) {
+                        this.payments.push(item)
+
+                    }
+                })
+
                 this.$data.to = `${el} ${this.$data.yearTo}`
             }
         },
@@ -270,7 +322,9 @@ export default defineComponent({
             // console.log(this.lcs)
             if (this.$pinia.state.value.lc?.lcResponse?.status == true) {
 
-                this.getPayments(this.$pinia.state.value.lc?.lcResponse?.data?.lcs[0]).then(() => {
+                this.getPayments(this.$pinia.state.value.lc?.lcResponse?.data?.lcs[0]?.lc_number).then(() => {
+                    this.payments = this.$pinia.state.value.lc?.paymentsResponse?.data
+
                     console.log(this.$pinia.state.value.lc?.paymentsResponse)
                     this.loadingPayments = false
 
@@ -311,6 +365,7 @@ export default defineComponent({
             setOpenTo,
             isOpen,
             isOpenTo,
+            moment
         }
     }
 
@@ -333,13 +388,13 @@ export default defineComponent({
     padding: 0;
 }
 
-.card-item:first-child .name,
-.card-item:first-child .value {
+/* .card-item:last-child .name,
+.card-item:last-child .value {
     font-size: 16px;
     font-family: AppFont-Bold;
     color: #232323;
 }
-
+ */
 .card-item .value,
 .name {
     color: #6D6D6D;

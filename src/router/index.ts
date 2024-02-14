@@ -92,7 +92,11 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'accrualAndPayment',
-        component: () => import('@/views/AccrualAndPayment.vue')
+        component: () => import('@/views/Invoices.vue')
+      },
+      {
+        path: 'paymentsHistory',
+        component: () => import('@/views/PaymentsHistory.vue')
       },
       {
         path: 'receipt',

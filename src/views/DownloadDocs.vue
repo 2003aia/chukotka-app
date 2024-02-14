@@ -25,30 +25,49 @@
                     <summary class="radios">
                         <!-- <label class="label">Выберите тему обращения</label> -->
 
-                        <input class="placeholder" type="radio" name="item" id="default" title="Квитанция" checked>
-                        <input type="radio" name="item" id="item1" title="Тема 1">
-                        <input type="radio" name="item" id="item2" title="Тема 2">
-                        <input type="radio" name="item" id="item3" title="Тема 3">
-                        <input type="radio" name="item" id="item4" title="Тема 4">
+                        <input class="placeholder" value="1" v-on:change="(e: any) => setDoc(e.target.value)" type="radio"
+                            name="item" id="default" title="Квитанция" checked>
+                        <input type="radio" value="1" v-on:change="(e: any) => setDoc(e.target.value)" name="item"
+                            id="item1" title="Квитанция">
+                        <input type="radio" value="2" v-on:change="(e: any) => setDoc(e.target.value)" name="item"
+                            id="item2" title="Договоры">
+                        <input type="radio" value="3" v-on:change="(e: any) => setDoc(e.target.value)" name="item"
+                            id="item3" title="Извещения">
                     </summary>
                     <ul class="list">
                         <li>
                             <label for="item1">
-                                Тема 1
+                                Квитанции
                             </label>
                         </li>
                         <li>
-                            <label for="item2">Тема 2</label>
+                            <label for="item2">Договоры</label>
                         </li>
                         <li>
-                            <label for="item3">Тема 3</label>
-                        </li>
-                        <li>
-                            <label for="item4">Тема 4</label>
+                            <label for="item3">Извещения</label>
                         </li>
 
                     </ul>
                 </details>
+                <div>
+                    <p class="acc-title">
+                        Лицевые счета
+                    </p>
+
+                    <div class="acc-list">
+
+                        <div class="spinner" v-show="loadingLcs">
+                            <ion-spinner name="circles"></ion-spinner>
+                        </div>
+                        <div class="acc-item" @click="setDoc(docType)" :class="[docType2 && 'active']">
+                            Все
+                        </div>
+                        <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)"
+                            :key="el" :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
+                            № {{ el.lc?.lc_number }}
+                        </div>
+                    </div>
+                </div>
                 <p class="input-text" style="margin-bottom:15px;">Период</p>
                 <div class="input-date-wrapper">
                     <div class="input-date">
@@ -141,10 +160,13 @@
                 <div class="spinner" v-show="loadingReceipts">
                     <ion-spinner name="circles"></ion-spinner>
                 </div>
+                <div class="card" v-show='errorText2'>
+                    <p class="errorText">{{ errorText2 }}</p>
+                </div>
                 <div class="card" v-show="!loadingReceipts" v-for="el in receiptsArr" :key="el?.data?.id">
                     <div class="card-list">
                         <div class="card-line">
-                            <p class="name">Квитанция</p>
+                            <p class="name">{{ docType }}</p>
                             <p class="value">№ {{ el?.data?.number }}</p>
                         </div>
                         <div class="card-line">
@@ -202,7 +224,13 @@ export default defineComponent({
     computed: {
         receipts() {
             return this.$pinia.state.value?.receipt?.receiptsResponse?.data
-        }
+        },
+        contracts() {
+            return this.$pinia.state.value?.receipt?.contractsResponse?.data
+        },
+        notices() {
+            return this.$pinia.state.value?.receipt?.noticesResponse?.data
+        },
     },
     data() {
         return {
@@ -215,8 +243,14 @@ export default defineComponent({
             loadingDownload: false,
             response: '',
             errorText: '',
+            errorText2: '',
+
             from: '',
             to: '',
+            from2: '',
+            to2: '',
+            docType: '',
+            docType2: false,
             year: new Date().getFullYear(),
             yearTo: new Date().getFullYear(),
             monthList: [
@@ -242,21 +276,28 @@ export default defineComponent({
         this.loadingLcs = true
         this.getLcs().then(() => {
             this.loadingLcs = false
-            this.$pinia.state.value?.lc?.lcResponse?.data?.lcs?.forEach((el: any) => {
-                this.lcs.push(el?.lc_id)
-            })
+
+            this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+                this.lcs.push({ lc: el, current: false })
+            });
+            this.docType2 = true
         })
         this.loadingReceipts = true
         this.getReceipts().then(() => {
             this.loadingReceipts = false
-            this.$pinia.state.value?.receipt?.receiptsResponse?.data?.forEach((el: any) => {
-                this.receiptsArr.push({ error: '', loading: false, data: el, })
-            })
+            if (this.$pinia.state.value?.receipt?.receiptsResponse?.status == true) {
+                this.$pinia.state.value?.receipt?.receiptsResponse?.data?.forEach((el: any) => {
+
+                    this.receiptsArr.push({ error: '', loading: false, data: el, })
+                })
+            }
+
             console.log(this.$pinia.state.value?.receipt?.receiptsResponse)
         })
+
     },
     methods: {
-        ...mapActions(useReceiptStore, ['sendAllReceiptsToEmail', 'downloadAllReceipts', 'getReceipts', 'downloadReceipt']),
+        ...mapActions(useReceiptStore, ['sendAllReceiptsToEmail', 'downloadAllReceipts', 'downloadReceipt', 'getReceipts', 'getContracts', 'getNotices']),
         ...mapActions(useLcStore, ['getLcs']),
         downloadHandler(id: any) {
             this.loadingDownload = true
@@ -303,10 +344,60 @@ export default defineComponent({
                 }
             })
         },
+
         setMonth(el: string, el2: string) {
+
             if (el2 == 'from') {
+                let monthArr: any = []
+                let monthNumber = 1
+                this.monthList.map((month, id) => {
+                    monthArr.push({ id: id + 1, name: month })
+                })
+                monthArr.find((e: any) => {
+                    if (e?.name == el) {
+                        monthNumber = e?.id
+                    }
+                })
+                this.from2 = `1.${monthNumber}.${this.year}`
+                this.receiptsArr = []
+                let newDate = `1.${monthNumber}.${this.year}`
+
+                let toNew = this.to2.length > 0 ? moment(this.to2) : moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`)
+                console.log(moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`))
+                this.receipts?.map((item: any) => {
+                    if (moment(moment(item?.date).format('D.M.yyyy')) <= toNew && moment(moment(item?.date).format('D.M.yyyy')) >= moment(newDate)) {
+                        // this.receiptsArr.push(item)
+                        this.receiptsArr.push({ error: '', loading: false, data: item, })
+
+                    }
+                })
+
                 this.$data.from = `${el} ${this.$data.year}`
             } else {
+                this.receiptsArr = []
+                let monthArr: any = []
+                let monthNumber = 1
+                this.monthList.map((month, id) => {
+                    monthArr.push({ id: id + 1, name: month })
+                })
+                monthArr.find((e: any) => {
+                    if (e?.name == el) {
+                        monthNumber = e?.id
+                    }
+                })
+                this.to2 = `1.${monthNumber}.${this.yearTo}`
+                let newDate = new Date(`1.${monthNumber}.${this.yearTo}`)
+                let fromNew = this.from2.length > 0 ? moment(this.from2) : moment(`1.${new Date().getMonth()}.${new Date().getFullYear()}`)
+
+                this.receipts?.map((item: any) => {
+
+                    if (moment(moment(item?.date).format('D.M.yyyy')) >= fromNew && moment(moment(item?.date).format('D.M.yyyy')) <= moment(newDate)) {
+                        // this.receiptsArr.push(item)
+                        this.receiptsArr.push({ error: '', loading: false, data: item, })
+
+                    }
+                })
+
                 this.$data.to = `${el} ${this.$data.yearTo}`
             }
         },
@@ -326,9 +417,149 @@ export default defineComponent({
             } else {
                 this.$data.yearTo += 1
             }
-        }
+        },
+        setDoc(e: any) {
+
+            console.log(e, 'set')
+            this.errorText2 = ''
+            if (e.length > 1) {
+                this.docType2 = true
+                this.lcs = []
+                this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
+                    
+                    this.lcs.push({ lc: el, current: false })
+                });
+            }
+            if (e == '1' || e == 'Квитанция') {
+                this.docType = 'Квитанция'
+
+                this.loadingReceipts = true
+                this.getReceipts().then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.receiptsResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.receiptsResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.receiptsResponse?.data
+                    }
+
+                })
+                console.log(e, 'квитанции')
+            }
+            if (e == '2' || e == 'Договор') {
+                this.docType = 'Договор'
+
+                this.loadingReceipts = true
+                this.getContracts().then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.contractsResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.contractsResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.contractsResponse?.data
+                    }
+                })
+                console.log(e, 'договоры')
+            }
+            if (e == '3' || e == 'Извещение') {
+                this.docType = 'Извещение'
+
+                this.loadingReceipts = true
+                this.getNotices().then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.noticesResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.noticesResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.noticesResponse?.data
+                    }
+                })
+                console.log(e, 'извещения')
+            }
+        },
+        changeTab(selected: any) {
+            this.errorText2 = ''
+
+            this.loadingReceipts = true
+            this.receiptsArr = []
+            if (this.docType == 'Квитанция') {
+                this.docType = 'Квитанция'
+                this.loadingReceipts = true
+                this.getReceipts(selected).then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.receiptsResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.receiptsResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.receiptsResponse?.data
+                    }
+
+                })
+                console.log(selected, 'квитанции')
+            }
+            if (this.docType == 'Договор') {
+                this.docType = 'Договор'
+
+                this.loadingReceipts = true
+                this.getContracts(selected).then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.contractsResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.contractsResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.contractsResponse?.data
+                    }
+
+                })
+                console.log(selected, 'договоры')
+            }
+            if (this.docType == 'Извещение') {
+                this.docType = 'Извещение'
+
+                this.loadingReceipts = true
+                this.getNotices().then(() => {
+                    this.loadingReceipts = false
+                    if (this.$pinia.state.value?.receipt?.noticesResponse?.status == true) {
+
+                        this.$pinia.state.value?.receipt?.noticesResponse?.data?.forEach((el: any) => {
+
+                            this.receiptsArr.push({ error: '', loading: false, data: el, })
+                        })
+                    } else {
+                        this.errorText2 = this.$pinia.state.value?.receipt?.noticesResponse?.data
+                    }
+
+                })
+                console.log(selected, 'извещения')
+            }
+
+            this.lcs?.map((t: any) => {
+                t?.lc?.lc_number === selected ? t.current = true : t.current = false
+            });
+        },
+    },
+    ionViewDidLeave() {
+        this.errorText2 = ''
+
     },
     ionViewDidEnter() {
+        this.docType = 'Квитанция'
 
         this.$data.from = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.year}`
         this.$data.to = `${this.$data.monthList[this.$data.currentMonth]} ${this.$data.yearTo}`

@@ -40,7 +40,7 @@
                     <ion-text>
                         <div class="card-item">
                             <p class="name">{{ el?.lamp }}</p>
-                            <p class="value">{{el?.date_create.substring(0, 10) }}</p>
+                            <p class="value">{{ el?.date_create }}</p>
                         </div>
                         <p class="text">
                             {{ el?.title }}
@@ -79,7 +79,6 @@ import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMen
 import { defineComponent } from 'vue';
 import { useAppealsStore } from '../stores/appeals'
 import { mapActions } from 'pinia';
-import moment from 'moment'
 
 export default defineComponent({
     name: 'Feedback',
@@ -90,9 +89,6 @@ export default defineComponent({
         return {
             loading: false,
         }
-    },
-    setup(){
-        return {moment}
     },
     methods: {
         ...mapActions(useAppealsStore, ['getAppeals']),

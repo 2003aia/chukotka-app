@@ -224,7 +224,8 @@ p {
     align-items: center;
     justify-content: space-between;
 }
-ion-item{
+
+ion-item {
     /* --background: #F4F8FC !important; */
 }
 
@@ -241,8 +242,16 @@ ion-item{
     border: none;
     border-bottom: 1px solid #ABA8A8;
     font-size: 14px;
-
 }
+
+.input.error {
+    border-bottom: 1px solid #F00;
+}
+
+.input-wrapper:has(.error) label {
+    color: #F00;
+}
+
 
 .input::placeholder {
     color: #ABA8A8;
@@ -331,6 +340,10 @@ input:valid~label {
 
 .radio label p {
     margin-bottom: 0;
+}
+
+.radio.error label p {
+    color: #F00;
 }
 
 .radio label {
@@ -457,6 +470,11 @@ ion-title {
     border-bottom: 1px solid #8CC3EA;
     background: #FFF;
     padding: 15px;
+}
+
+.card-input.error input {
+    border-bottom: 1px solid #F00;
+
 }
 
 
@@ -589,12 +607,26 @@ ion-title {
     position: relative;
 }
 
+.custom-select.error summary {
+    padding: 30px 0 15px 0;
+    cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #F00;
+    font-size: 14px;
+    position: relative;
+}
+
+
 .custom-select summary::-webkit-details-marker {
     display: none;
 }
 
 .custom-select summary .placeholder {
     color: #ABA8A8;
+}
+
+.custom-select.error summary .placeholder {
+    color: #F00;
 }
 
 .custom-select[open] summary:before {
@@ -762,11 +794,14 @@ ion-title {
     margin-top: 20px;
 }
 
-.spinner{
+.spinner {
     display: flex;
     justify-content: center;
     width: 100%;
 }
+
 ion-spinner {
-    --color:  /*#fff #005D9F */;
+    --color:
+        /*#fff #005D9F */
+    ;
 }

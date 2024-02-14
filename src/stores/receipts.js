@@ -10,12 +10,17 @@ export const useReceiptStore = defineStore({
     state: () => ({
         receiptsResponse: null,
         receiptsError: null,
+        contractsError: null,
+        contractsResponse : null,
+        noticesError: null,
+        noticesResponse: null,
         sendAllResponse: null,
         sendAllError: null,
         downloadAllResponse: null,
         downloadAllError: null,
         downloadResponse: null,
         downloadError: null,
+    
     }),
     getters: {
         getPostsPerAuthor: (state) => {
@@ -25,15 +30,16 @@ export const useReceiptStore = defineStore({
     },
     actions: {
 
-        async getReceipts() {
+        async getReceipts(lc) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
+            
             try {
                 await axios
                     .get(
-                        `${apiUrl}get/receipts`,
+                        `${apiUrl}get/receipts${lc?.length > 0 ? `?lc=${lc}` : ''}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -48,6 +54,56 @@ export const useReceiptStore = defineStore({
                     });
             } catch (error) {
                 this.receiptsError = error;
+            }
+        },
+        async getContracts(lc) {
+            const store = new Storage();
+            await store.create();
+            let token = await store.get("token");
+            let tokenNew = JSON.parse(token)
+            try {
+                await axios
+                    .get(
+                        `${apiUrl}get/contracts${lc?.length > 0 ? `?lc=${lc}` : ''}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${tokenNew}`
+                            }
+                        }
+                    )
+                    .then((response) => {
+                        this.contractsResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+                    });
+            } catch (error) {
+                this.contractsError = error;
+            }
+        },
+        async getNotices(lc) {
+            const store = new Storage();
+            await store.create();
+            let token = await store.get("token");
+            let tokenNew = JSON.parse(token)
+            try {
+                await axios
+                    .get(
+                        `${apiUrl}get/notices${lc?.length > 0 ? `?lc=${lc}` : ''}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${tokenNew}`
+                            }
+                        }
+                    )
+                    .then((response) => {
+                        this.noticesResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+                    });
+            } catch (error) {
+                this.noticesError = error;
             }
         },
         async downloadReceipt(data) {

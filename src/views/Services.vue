@@ -42,7 +42,7 @@
 
                         <ion-label>Скачать документы</ion-label>
                     </ion-item>
-                    <ion-item class="menu-item" router-link="/tabs/feedback">
+                    <ion-item class="menu-item" router-link="/tabs/feedbackAdd">
                         <img class="menu-icon" src="../assets/feedback.svg" slot="start" />
 
                         <ion-label>Обратная связь</ion-label>

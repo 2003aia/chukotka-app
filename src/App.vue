@@ -20,8 +20,15 @@ export default defineComponent({
     ...mapActions(useLoginStore, ['getUser'])
   },
   mounted() {
-    console.log('getUser')
-    this.getUser().then(()=>{
+    console.log('getUser', this.$router.currentRoute.value.fullPath)
+    this.getUser().then(() => {
+      
+      if (this.$pinia.state.value?.login?.userResponse?.status == true && this.$router.currentRoute.value.fullPath == '/auth') {
+        this.$router.push('/tabs')
+      } else {
+        this.$router.push(this.$router.currentRoute.value.fullPath)
+      }
+
       console.log('getUser2')
     })
   },

@@ -23,17 +23,34 @@
                     <ion-spinner name="circles"></ion-spinner>
                 </div>
 
-
-                <div class="card" v-for="el in notif" :key="el?.id" v-show="!loading">
+                <p class="errorText" v-show="errorText">{{ errorText }}</p>
+                <div class="card" v-for="el in notifArr" :key="el?.data?.id" v-show="!loading">
                     <ion-text>
                         <div class="card-item">
-                            <p class="name link">{{el?.name }}</p>
-                            <p class="value">{{ el?.date_create?.substring(0,10) }}</p>
+                            <p class="name link">{{ el?.data?.name }}</p>
+                            <p class="value">{{ el?.data?.date_create?.substring(0, 10) }}</p>
                         </div>
                         <p class="text">
-                            {{ el?.text }}
+                            {{ el?.data?.text }}
                         </p>
-                        <a class="link">Подробнее</a>
+                        <a class="link" @click="setShow(el?.data?.id, el?.show)">{{ el?.show == false ? 'Подробнее' :
+                            'Скрыть' }}</a>
+                        <div v-show="el?.show == true" class="card" style="margin-bottom: 0;">
+                            {{ el?.data?.text }}
+
+                            <div class="card-last">
+                                <div class="spinner" v-show="el?.loading">
+                                    <ion-spinner name="circles"></ion-spinner>
+                                </div>
+
+                                <span v-for="el2 in el?.data?.files" v-show="!el?.loading"
+                                    @click="downloadHandler(el2?.link)" :key="el2?.id">
+                                    Скачать <img src="../assets/download.svg" alt="download">
+                                </span>
+                            </div>
+
+                        </div>
+
                     </ion-text>
                 </div>
 
@@ -47,8 +64,8 @@
 <script lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue'
-import {mapActions} from "pinia"
-import {useNotifStore} from '../stores/notifications'
+import { mapActions } from "pinia"
+import { useNotifStore } from '../stores/notifications'
 
 export default defineComponent({
     name: 'Уведомления',
@@ -56,23 +73,49 @@ export default defineComponent({
         IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButtons, IonText, IonSpinner
     },
     methods: {
-        ...mapActions(useNotifStore, ['getNotif'])
+        ...mapActions(useNotifStore, ['getNotif']),
+        setShow(id: any, show: any) {
+
+            console.log(show)
+            if (show == true) {
+                this.notifArr?.map((t: any) => {
+                    t?.data?.id === id ? t.show = false : t.show = false
+                });
+            } else {
+                this.notifArr?.map((t: any) => {
+                    t?.data?.id === id ? t.show = true : t.show = false
+                });
+            }
+
+        },
+        downloadHandler(el: any) {
+            window.open(el, '_system')
+        }
     },
-    mounted(){
-        this.loading =true
-        this.getNotif().then(()=>{
+    mounted() {
+        this.loading = true
+        this.getNotif().then(() => {
             this.loading = false
+            if (this.$pinia.state.value.notif?.notifResponse?.status == true) {
+                this.$pinia.state.value.notif?.notifResponse?.data?.forEach((el) => {
+                    this.notifArr.push({ data: el, show: false, loading: false })
+                })
+            } else {
+                this.errorText = this.$pinia.state.value.notif?.notifResponse?.data
+            }
             console.log(this.$pinia.state.value.notif?.notifResponse)
         })
     },
-    computed:{
-        notif(){
+    computed: {
+        notif() {
             return this.$pinia.state.value.notif?.notifResponse?.data
         }
     },
     data() {
         return {
-loading: false,
+            loading: false,
+            notifArr: [],
+            errorText: '',
         }
     }
 })
@@ -84,13 +127,30 @@ loading: false,
     font-family: AppFont-Bold;
     font-size: 16px;
     font-weight: 450;
-
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
-.card .value{
+.card .value {
     color: #6D6D6D;
     font-size: 14px;
+}
+
+.card-last {
+    display: flex;
+    /* justify-content: end; */
+    margin-top: 20px;
+    flex-direction: column;
+}
+
+.card-last span {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin-bottom: 10px;
+
 }
 </style>
   

@@ -10,25 +10,25 @@
                     <h1>Добавить лицевой счет</h1>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input v-model="city" class="input" required />
+                    <input v-model="city" class="input" required :class="[errorText && 'error']"/>
                     <label>Город/населенный пункт</label>
                 </div>
                 <div class="input-wrapper">
-                    <input v-model="street" class="input" required />
+                    <input v-model="street" class="input" required :class="[errorText && 'error']"/>
                     <label>Улица</label>
                 </div>
                 <div class="input-block">
                     <div class="input-wrapper">
-                        <input v-model="house" class="input" required />
+                        <input v-model="house" class="input" required :class="[errorText && 'error']"/>
                         <label>Дом</label>
                     </div>
                     <div class="input-wrapper">
-                        <input v-model="apartment" class="input" required />
+                        <input v-model="apartment" class="input" required :class="[errorText && 'error']"/>
                         <label>Квартира</label>
                     </div>
                 </div>
                 <div class="input-wrapper">
-                    <input v-model="lc" class="input" required />
+                    <input v-model="lc" class="input" required :class="[errorText && 'error']"/>
                     <label>Номер лицевого счета</label>
                 </div>
 

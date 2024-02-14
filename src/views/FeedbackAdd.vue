@@ -46,36 +46,35 @@
                     </div>
                 </div>
 
-                <details class="custom-select">
+                <details class="custom-select" :class="[errorText && 'error']">
                     <summary class="radios">
                         <label class="label">Выберите тему обращения</label>
 
-                        <input class="placeholder" type="radio" name="item" id="default" title="Личный кабинет" checked>
-                        <input type="radio" name="item" id="item1" title="Тема 1">
-                        <input type="radio" name="item" id="item2" title="Тема 2">
-                        <input type="radio" name="item" id="item3" title="Тема 3">
-                        <input type="radio" name="item" id="item4" title="Тема 4">
+                        <input class="placeholder" value="0" v-model.number="category" type="radio" name="item" id="default"
+                            title="Выберите тему обращения" checked>
+                        <input type="radio" value="1" v-model.number="category" name="item" id="item1"
+                            title="Личный кабинет">
+                        <input type="radio" value="2" v-model.number="category" name="item" id="item2" title="Жалоба">
+                        <input type="radio" value="3" v-model.number="category" name="item" id="item3" title="Вопрос">
                     </summary>
                     <ul class="list">
                         <li>
                             <label for="item1">
-                                Тема 1
+                                Личный кабинет
                             </label>
                         </li>
                         <li>
-                            <label for="item2">Тема 2</label>
+                            <label for="item2">Жалоба</label>
                         </li>
                         <li>
-                            <label for="item3">Тема 3</label>
+                            <label for="item3">Вопрос</label>
                         </li>
-                        <li>
-                            <label for="item4">Тема 4</label>
-                        </li>
+
 
                     </ul>
                 </details>
                 <div class="input-wrapper">
-                    <input class="input" type="text" required />
+                    <input v-model="text" :class="[errorText && 'error']" class="input" type="text" required />
                     <label>Сообщение</label>
                 </div>
 
@@ -88,15 +87,24 @@
                     <label v-show="file[0]?.name ? false : true" for="files"><img src="../assets/file.svg"
                             alt="file"></label>
                 </div>
-                <div class="radio">
-                    <input id="policy2" type="radio" name="policy2" value="policy2">
+                <div class="radio" :class="[errorText && 'error']">
+                    <input id="policy2" v-model.number="checked" type="radio" name="policy2" value="policy2">
                     <label class="label" for="policy2">
                         <span></span>
                         <p>Даю согласие на обработку персональных данных</p>
                     </label>
                 </div>
-                <div class="btns">
-                    <div class="btn">Отправить</div>
+                <p class="response" v-show="response">{{ response }}</p>
+                <p class="errorText" v-show="errorText">{{ errorText }}</p>
+                <div class="btns" @click="createTicketHandler">
+                    <div class="btn">
+                        <div class="spinner" v-show="loading">
+                            <ion-spinner name="circles"></ion-spinner>
+                        </div>
+                        <span v-show="!loading">
+                            Отправить
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -109,15 +117,15 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
-
-
+import { useAppealsStore } from '../stores/appeals'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     name: 'FeedbackAdd',
     components: {
-        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,
+        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner
     },
     data() {
         return {
@@ -126,9 +134,40 @@ export default defineComponent({
                 passNew: false,
             },
             file: [],
+            loading: false,
+            category: '',
+            text: '',
+            errorText: '',
+            response: '',
+            checked: ''
         }
     },
     methods: {
+        ...mapActions(useAppealsStore, ['createTicket']),
+        createTicketHandler() {
+            this.errorText = ''
+            this.response = ''
+            this.loading = true
+            let data = {
+                message: this.text,
+                category_id: Number(this.category),
+            }
+            console.log(data, this.checked)
+            if (this.text.length > 0 && this.category !== '0' && this.checked.length > 0) {
+                this.createTicket(data).then(() => {
+                    this.loading = false
+                    if (this.$pinia.state.value.appeals?.createResponse?.status == true) {
+                        this.response = this.$pinia.state.value.appeals?.createResponse?.data
+
+                    } else {
+                        this.errorText = this.$pinia.state.value.appeals?.createResponse?.data
+                    }
+                })
+            } else {
+                this.errorText = 'Заполните обязательные поля!'
+            }
+
+        },
         setFile(e: any) {
             this.$data.file = e.target.files
         },
@@ -160,6 +199,11 @@ export default defineComponent({
     },
     mounted() {
         console.log(this.$route.query, 'test')
+        this.category = ''
+    },
+    ionViewDidLeave() {
+        this.errorText = ''
+        this.response = ''
     }
 })
 </script>
@@ -232,8 +276,5 @@ ion-fab-button {
 .btn-back {
     margin-bottom: 0;
 }
-
-
-
 </style>
   

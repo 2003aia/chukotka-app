@@ -10,6 +10,8 @@ export const useLcStore = defineStore({
     state: () => ({
         paymentsResponse: null,
         paymentsError: null,
+        invoicesResponse: null,
+        invoicesError: null,
         lcResponse: null,
         lcError: null,
         lcInfoResponse: null,
@@ -82,15 +84,20 @@ export const useLcStore = defineStore({
                 this.lcInfoError = error;
             }
         },
-        async addIndice(lc) {
+        async addIndice(data) {
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
             try {
                 await axios
-                    .get(
-                        `${apiUrl}send/${lc}`,
+                    .post(
+                        `${apiUrl2}${data?.lc}`,
+                        {
+                            number: data?.number,
+                            p1: data?.p1,
+                            p2: data?.p2
+                        },
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -168,6 +175,32 @@ export const useLcStore = defineStore({
                 this.addLcError = error;
             }
         },
+        async getInvoices(lc) {
+            const store = new Storage();
+            await store.create();
+            let token = await store.get("token");
+            let tokenNew = JSON.parse(token)
+            try {
+                await axios
+                    .get(
+                        `${apiUrl}get/${lc}/invoices`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${tokenNew}`
+                            }
+                        }
+                    )
+                    .then((response) => {
+                        this.invoicesResponse = response.data
+                        if (response.data?.status == false) {
+                            // this.$router.push('/auth')
+                        }
+                    });
+            } catch (error) {
+                this.invoicesError = error;
+            }
+        },
+
         async getPayments(lc) {
             const store = new Storage();
             await store.create();
@@ -193,7 +226,5 @@ export const useLcStore = defineStore({
                 this.paymentsError = error;
             }
         },
-
-
     },
 });
