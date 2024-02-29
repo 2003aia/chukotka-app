@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package io.ionic.chukotka;
 
 import com.getcapacitor.BridgeActivity;
 

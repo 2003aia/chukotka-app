@@ -92,8 +92,8 @@
                         v-on:change="(e: any) => passwordOld = e.target.value" type="password" />
                     <label>Введите старый пароль</label>
                     <div @click="passToggle('passOld')">
-                        <img v-show="pass.passOld == true" src="../assets/pass-close.svg" alt="pen">
-                        <img v-show="pass.passOld == false" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passOld == true" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passOld == false" src="../assets/pass-close.svg" alt="pen">
 
                     </div>
                 </div>
@@ -106,8 +106,8 @@
                     <label>Введите новый пароль</label>
                     <div @click="passToggle('passNew')">
 
-                        <img v-show="pass.passNew == true" src="../assets/pass-close.svg" alt="pen">
-                        <img v-show="pass.passNew == false" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passNew == true" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passNew == false" src="../assets/pass-close.svg" alt="pen">
 
                     </div>
 
@@ -118,8 +118,8 @@
                     <label>Подтвердите новый пароль</label>
                     <div @click="passToggle('passCon')">
 
-                        <img v-show="pass.passCon == true" src="../assets/pass-close.svg" alt="pen">
-                        <img v-show="pass.passCon == false" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passCon == true" src="../assets/pass-open.svg" alt="pen">
+                        <img v-show="pass.passCon == false" src="../assets/pass-close.svg" alt="pen">
 
                     </div>
 
@@ -135,7 +135,14 @@
                 <p class="response">{{ response }}</p>
                 <p class="errorText">{{ errorText }}</p>
 
-                <button class="btn" @click="editUserHandler">Сохранить</button>
+                <button class="btn" @click="editUserHandler">
+                    <div class="spinner" v-show="loading">
+                        <ion-spinner name="circles"></ion-spinner>
+                    </div>
+                    <span v-show="!loading">
+                        Сохранить
+                    </span>
+                </button>
 
             </div>
         </ion-footer>
@@ -143,7 +150,7 @@
 </template>
   
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { mapActions } from 'pinia';
 import { useLoginStore } from '../stores/login'
@@ -152,7 +159,7 @@ import { useLoginStore } from '../stores/login'
 export default defineComponent({
     name: 'ProfileEdit',
     components: {
-        IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle
+        IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner
     },
     data() {
         return {
@@ -171,21 +178,32 @@ export default defineComponent({
             phone: '',
             response: '',
             errorText: '',
+            loading: false,
         }
     },
     methods: {
         ...mapActions(useLoginStore, ['editUser', 'editPassword']),
         editUserHandler() {
             if (this.$route.query?.link == 'password') {
+                console.log('password')
+
                 if (this.passwordNew === this.passwordConfirm) {
+                    this.loading = true
+                    this.errorText = ''
+
                     let data = {
                         password: this.passwordOld,
                         new_password: this.passwordNew,
                         password_confirm: this.passwordConfirm,
                     }
                     this.editPassword(data).then(() => {
-                        this.response = this.$pinia.state.value.login?.changePassResponse?.data
-                        this.errorText = ''
+                        this.loading = false
+                        if (this.$pinia.state.value.login?.changePassResponse?.status == true) {
+                            this.response = this.$pinia.state.value.login?.changePassResponse?.data
+                        } else {
+                            this.errorText = this.$pinia.state.value.login?.changePassResponse?.data
+                        }
+
                     })
                 } else {
                     this.errorText = 'Пароли не совпадают'
@@ -202,8 +220,17 @@ export default defineComponent({
                     phone: this.phone,
 
                 }
+                this.loading = true
+
                 this.editUser(data).then(() => {
-                    this.response = this.$pinia.state.value.login?.userResponse?.data
+                    this.loading = false
+
+                    if (this.$pinia.state.value.login?.userResponse?.status == true) {
+                        this.response = this.$pinia.state.value.login?.userResponse?.data
+
+                    } else {
+                        this.errorText = this.$pinia.state.value.login?.userResponse?.data
+                    }
                     console.log(this.$pinia.state.value.login?.userResponse)
                 })
             }

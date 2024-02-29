@@ -7,7 +7,9 @@
     margin: auto;
 }
 
-
+/* ion-content{
+    height: calc(100vh-150px)
+ } */
 .header-wrapper {
     display: flex;
     justify-content: space-between;
@@ -312,7 +314,9 @@ input:valid~label {
 .input-wrapper input:focus {
     border-bottom: 1px solid #005D9F;
     caret-color: #005D9F;
-
+}
+ion-content:has(input:focus) ~ ion-footer {
+    display: none;
 }
 
 .input-wrapper img {

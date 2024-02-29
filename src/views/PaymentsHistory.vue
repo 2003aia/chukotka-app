@@ -39,7 +39,7 @@
                         <div class="spinner" v-show="loadingLcs">
                             <ion-spinner name="circles"></ion-spinner>
                         </div>
-                        <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)"
+                        <div v-for="el in lcsMob" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)"
                             :key="el" :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
                             № {{ el.lc?.lc_number }}
                         </div>
@@ -220,7 +220,7 @@ export default defineComponent({
 
             })
 
-            this.lcs?.map((t: any) => {
+            this.lcsMob?.map((t: any) => {
                 t?.lc?.lc_number === selected ? t.current = true : t.current = false
             });
         },
@@ -313,10 +313,10 @@ export default defineComponent({
 
             this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
                 if (index === 0) {
-                    this.lcs.push({ lc: el, current: true })
+                    this.lcsMob.push({ lc: el, current: true })
 
                 } else {
-                    this.lcs.push({ lc: el, current: false })
+                    this.lcsMob.push({ lc: el, current: false })
                 }
             });
             // console.log(this.lcs)
@@ -345,6 +345,9 @@ export default defineComponent({
         },
         paymentsArray() {
             return this.$pinia.state.value.lc?.paymentsResponse?.data
+        },
+        lcsMob() {
+            return this.$pinia.state.value.lc?.lcsMod
         }
     },
     setup() {

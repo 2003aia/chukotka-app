@@ -11,7 +11,7 @@
         </ion-text>
         <div class="input-wrapper">
           <input :value="login" v-on:change="(e: any) => login = e.target.value" class="input" :class="[errorText && 'error']" required />
-          <label>Лицевой счет</label>
+          <label>Логин</label>
         </div>
         <div class="input-wrapper">
           <input :value="lastname" v-on:change="(e: any) => lastname = e.target.value" class="input" :class="[errorText && 'error']" required />
@@ -47,8 +47,8 @@
             ref="passReg" required type="password" />
           <label>Подтвердите пароль</label>
           <div @click="passToggle">
-            <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
-            <img v-show="pass == false" src="../assets/pass-open.svg" alt="pen">
+            <img v-show="pass == true" src="../assets/pass-open.svg" alt="pen">
+            <img v-show="pass == false" src="../assets/pass-close.svg" alt="pen">
           </div>
         </div>
         <div class="radio">

@@ -11,26 +11,28 @@
         </ion-text>
         <ion-text>
           <p>
-            На номер телефона +7999 999 99 99 было направлено SMS-сообщение с кодом подтверждения регистрации, введите
+            На номер телефона было направлено SMS-сообщение с кодом подтверждения регистрации, введите
             полученный код
           </p>
         </ion-text>
 
-        <div class="input-otp">
-          <input id="first" :value='first' v-on:change="(e:any)=>first=e.target.value" required v-on:keyup="(e) => clickEvent(e, 'sec')" placeholder="1" max="1" type="number"
-            class="input">
-          <input id="sec" :value='second' v-on:change="(e:any)=>second=e.target.value" required v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="number"
-            class="input">
-          <input id="third" :value='third' v-on:change="(e:any)=>third=e.target.value" required v-on:keyup="(e) => clickEvent(e, 'fourth')" placeholder="1" maxlength="1"
-            type="number" class="input">
-          <input id="fourth" :value='fourth' v-on:change="(e:any)=>fourth=e.target.value" required placeholder="1" maxlength="1" type="number" class="input">
+        <div class="input-otp" :class="[errorText && 'error']">
+          <input id="first" :value='first' v-on:change="(e: any) => first = e.target.value" required
+            v-on:keyup="(e) => clickEvent(e, 'sec')" placeholder="1" maxlength="1" type="text" class="input">
+          <input id="sec" :value='second' v-on:change="(e: any) => second = e.target.value" required
+            v-on:keyup="(e) => clickEvent(e, 'third')" placeholder="1" maxlength="1" type="text" class="input">
+          <input id="third" :value='third' v-on:change="(e: any) => third = e.target.value" required
+            v-on:keyup="(e) => clickEvent(e, 'fourth')" placeholder="1" maxlength="1" type="text" class="input">
+          <input id="fourth" :value='fourth' v-on:change="(e: any) => fourth = e.target.value"
+            v-on:keyup="(e) => clickEvent(e, 'first')" placeholder="1" maxlength="1" type="text" class="input">
         </div>
       </div>
 
     </ion-content>
     <ion-footer class="ion-no-border">
       <div class="btns container">
-        <p class="response">{{ response }}</p>
+        <p class="errorText" v-show="errorText">{{ errorText }}</p>
+        <p class="response" v-show="response">{{ response }}</p>
         <button class="btn" @click="confirmHandler">
           <div class="spinner" v-show="loading">
             <ion-spinner name="circles"></ion-spinner>
@@ -64,28 +66,37 @@ export default defineComponent({
       third: '',
       fourth: '',
       response: '',
-      loading: false
+      loading: false,
+      maxLength: 1,
+      errorText: ''
     }
   },
   methods: {
     ...mapActions(useLoginStore, ['confirm',]),
     confirmHandler() {
-      this.loading = true
-      let input = this.first + this.second + this.third + this.fourth
-      let data = {
-        code: input
-      }
-      this.confirm(data).then(() => {
-        this.loading = false
-        this.response = this.$pinia.state.value.login.codeResponse?.data
-        if (this.$pinia.state.value.login.codeResponse?.status == false/* true */) {
-          this.$router.push('/confirm')
-        } else {
-          console.log(this.$pinia.state.value.login.codeResponse)
+      this.errorText = ''
+      if (this.first.length == 1 && this.second.length == 1 && this.third.length == 1 && this.fourth.length == 1) {
 
+        this.loading = true
+        let input = this.first + this.second + this.third + this.fourth
+        let data = {
+          code: input
         }
-        console.log(this.$pinia.state.value.login.codeResponse)
-      })
+        this.confirm(data).then(() => {
+          this.loading = false
+          this.response = this.$pinia.state.value.login.codeResponse?.data
+          if (this.$pinia.state.value.login.codeResponse?.status == false/* true */) {
+            this.$router.push('/confirm')
+          } else {
+            console.log(this.$pinia.state.value.login.codeResponse)
+
+          }
+          console.log(this.$pinia.state.value.login.codeResponse)
+        })
+      } else {
+        this.errorText = 'Заполните все поля!'
+      }
+
     },
     backFnc() {
       this.$router.go(-1)
@@ -136,12 +147,13 @@ export default defineComponent({
   caret-color: #005D9F;
 }
 
-.input-otp input:not(:valid) {
-  border-color: 1px solid #F00 !important;
+.input-otp.error input {
+  border: 1px solid #F00 !important;
   /* caret-color: #F00; */
 }
 
 .input-otp input:last-child {
   margin-right: 0;
-}</style>
+}
+</style>
   

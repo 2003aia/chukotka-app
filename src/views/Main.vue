@@ -56,7 +56,7 @@
             <div class="spinner" v-show="loadingLcs">
               <ion-spinner name="circles"></ion-spinner>
             </div>
-            <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)" :key="el"
+            <div v-for="el in lcsMob" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)" :key="el"
               :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
               № {{ el.lc?.lc_number }}
             </div>
@@ -117,7 +117,9 @@
           </div>
 
           <div class="btns">
-            <button class="btn" @click="$router.push({path: '/tabs/indices', name: 'Показания', query: {link: lcInfo?.lc}})">Передать показания</button>
+            <button class="btn"
+              @click="$router.push({ path: '/tabs/indices', name: 'Показания', query: { link: lcInfo?.lc } })">Передать
+              показания</button>
             <button class="btn-outline black" @click="setOpen(true)">Удалить</button>
             <ion-modal :is-open="isOpen" mode="ios">
               <ion-content>
@@ -130,7 +132,8 @@
                         {{ response }}
                       </p>
                     </ion-text>
-                    <img @click="()=>{setOpen(false); deleted = false}" aria-hidden="true" src="../assets/close.svg" alt="close">
+                    <img @click="() => { setOpen(false); deleted = false }" aria-hidden="true" src="../assets/close.svg"
+                      alt="close">
 
 
                     <!-- <ion-button @click="setOpen(false)" class="close" size="small" shape="round" fill="clear"
@@ -139,7 +142,8 @@
                 </ion-button> -->
                   </div>
                   <div class="modal-footer" v-show="deleted == true">
-                    <button class="btn-outline" fill="clear" @click="()=>{setOpen(false); deleted = false}">Выйти</button>
+                    <button class="btn-outline" fill="clear"
+                      @click="() => { setOpen(false); deleted = false }">Выйти</button>
 
                   </div>
                   <div class="modal-footer" v-show="deleted == false">
@@ -259,6 +263,8 @@ export default defineComponent({
   mounted() {
     this.getUser()
     this.loadingLcs = true
+    console.log(this.lcsMob)
+
     this.getLcs().then(() => {
       this.loadingLcs = false
       if (this.$pinia.state.value.lc.lcResponse?.status == true) {
@@ -272,10 +278,12 @@ export default defineComponent({
 
       this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
         if (index === 0) {
-          this.lcs.push({ lc: el, current: true })
+          this.lcsMob?.push({ lc: el, current: true })
 
         } else {
-          this.lcs.push({ lc: el, current: false })
+          this.lcsMob?.push({ lc: el, current: false })
+
+          // this.lcs.push({ lc: el, current: false })
           // console.log(this.lcs)
         }
       });
@@ -294,14 +302,15 @@ export default defineComponent({
 
       })
 
-      this.lcs?.map((t: any) => {
+
+      this.lcsMob?.map((t: any) => {
         t?.lc?.lc_number === selected ? t.current = true : t.current = false
       });
     },
     async deleteLcHandler(lc: any) {
       this.deleted = false
       this.loadingDel = true
-      let lcObj = this.lcs.find((e) => e?.lc?.lc_number == lc)
+      let lcObj = this.lcsMob.find((e) => e?.lc?.lc_number == lc)
       this.loadingLcs = true
       this.deleteLc(lcObj?.lc?.lc_id).then(() => {
         this.loadingDel = false
@@ -324,10 +333,10 @@ export default defineComponent({
 
             this.$pinia.state.value.lc?.lcResponse?.data?.lcs?.forEach((el: any, index: any) => {
               if (index === 0) {
-                this.lcs.push({ lc: el, current: true })
+                this.lcsMob.push({ lc: el, current: true })
 
               } else {
-                this.lcs.push({ lc: el, current: false })
+                this.lcsMob.push({ lc: el, current: false })
                 // console.log(this.lcs)
               }
             });
@@ -366,6 +375,9 @@ export default defineComponent({
     },
     lcInfo() {
       return this.$pinia.state.value?.lc?.lcInfoResponse?.data
+    },
+    lcsMob(){
+      return this.$pinia.state.value.lc?.lcsMod
     }
   },
   data() {
@@ -377,7 +389,7 @@ export default defineComponent({
       deleted: false,
       errorText: '',
       response: '',
-      
+
     }
   }
 })

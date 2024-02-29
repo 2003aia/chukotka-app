@@ -52,11 +52,16 @@ export const useAppealsStore = defineStore({
             await store.create();
             let token = await store.get("token");
             let tokenNew = JSON.parse(token)
+            let formData = new FormData
+            formData.append('file', data?.files)
+            formData.append('category_id', data?.category_id)
+            formData.append('message', data?.message)
+
             try {
                 await axios
                     .post(
                         `${apiUrl}create`,
-                        data,
+                        formData,
                         {
                             headers: {
                                 Authorization: `Bearer ${tokenNew}`
@@ -65,9 +70,9 @@ export const useAppealsStore = defineStore({
                     )
                     .then((response) => {
                         this.createResponse = response.data
-                        if (response.data?.status == false) {
+                       /*  if (response.data?.status == false) {
                             this.$router.push('/auth')
-                        }
+                        } */
                     });
             } catch (error) {
                 this.createError = error;

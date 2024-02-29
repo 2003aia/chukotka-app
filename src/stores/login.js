@@ -226,9 +226,7 @@ export const useLoginStore = defineStore({
                             await store.create();
                             await store.set("user", JSON.stringify(response.data?.data));
                         } */
-                        if (s = response.data?.status == false) {
-                            // this.$router.push('/auth')
-                        }
+                        
 
 
                     });

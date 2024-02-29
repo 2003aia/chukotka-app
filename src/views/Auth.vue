@@ -9,7 +9,7 @@
 
           <input :value="login" v-on:change="(e) => login = e.target.value" class="input" :class="[errorText && 'error']"
             required />
-          <label>Лицевой счет</label>
+          <label>Логин</label>
         </div>
 
         <div class="input-wrapper">
@@ -17,8 +17,8 @@
             :class="[errorText && 'error']" ref="passAuth" required type="password" />
           <label>Пароль</label>
           <div @click="passToggle">
-            <img v-show="pass == true" src="../assets/pass-close.svg" alt="pen">
-            <img v-show="pass == false" src="../assets/pass-open.svg" alt="pen">
+            <img v-show="pass == true" src="../assets/pass-open.svg" alt="pen">
+            <img v-show="pass == false" src="../assets/pass-close.svg" alt="pen">
           </div>
         </div>
         <button class="btn-link" @click="$router.push('/passwordRecovery')">

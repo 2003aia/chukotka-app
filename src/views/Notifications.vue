@@ -45,7 +45,7 @@
 
                                 <span v-for="el2 in el?.data?.files" v-show="!el?.loading"
                                     @click="downloadHandler(el2?.link)" :key="el2?.id">
-                                    Скачать <img src="../assets/download.svg" alt="download">
+                                    Файл <img src="../assets/download.svg" alt="download">
                                 </span>
                             </div>
 

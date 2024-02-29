@@ -35,16 +35,16 @@
             <input :value="password" v-on:change="(e:any)=>password = e.target.value" required ref="passOld" type="password" class="input">
             <label>Пароль</label>
             <div @click="passToggle('passOld')">
-              <img v-show="pass.passOld == true" src="../assets/pass-close.svg" alt="pen">
-              <img v-show="pass.passOld == false" src="../assets/pass-open.svg" alt="pen">
+              <img v-show="pass.passOld == true" src="../assets/pass-open.svg" alt="pen">
+              <img v-show="pass.passOld == false" src="../assets/pass-close.svg" alt="pen">
             </div>
           </div>
           <div class="input-wrapper">
             <input :value="passwordConfirm" v-on:change="(e:any)=>passwordConfirm = e.target.value" required ref="passNew" type="password" class="input">
             <label>Повторите пароль</label>
             <div @click="passToggle('passNew')">
-              <img v-show="pass.passNew == true" src="../assets/pass-close.svg" alt="pen">
-              <img v-show="pass.passNew == false" src="../assets/pass-open.svg" alt="pen">
+              <img v-show="pass.passNew == true" src="../assets/pass-open.svg" alt="pen">
+              <img v-show="pass.passNew == false" src="../assets/pass-close.svg" alt="pen">
             </div>
           </div>
 

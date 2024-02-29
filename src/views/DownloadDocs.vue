@@ -62,8 +62,9 @@
                         <div class="acc-item" @click="setDoc(docType)" :class="[docType2 && 'active']">
                             Все
                         </div>
-                        <div v-for="el in lcs" v-show='!loadingLcs' class="acc-item" @click="changeTab(el?.lc?.lc_number)"
-                            :key="el" :href="el?.lc?.lc_id" :class="[el?.current && 'active']">
+                        <div v-for="el in lcsMob" v-show='!loadingLcs' class="acc-item"
+                            @click="changeTab(el?.lc?.lc_number)" :key="el" :href="el?.lc?.lc_id"
+                            :class="[el?.current && 'active']">
                             № {{ el.lc?.lc_number }}
                         </div>
                     </div>
@@ -231,6 +232,9 @@ export default defineComponent({
         notices() {
             return this.$pinia.state.value?.receipt?.noticesResponse?.data
         },
+        lcsMob() {
+            return this.$pinia.state.value.lc?.lcsMod
+        }
     },
     data() {
         return {
@@ -278,7 +282,7 @@ export default defineComponent({
             this.loadingLcs = false
 
             this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
-                this.lcs.push({ lc: el, current: false })
+                this.lcsMob.push({ lc: el, current: false })
             });
             this.docType2 = true
         })
@@ -301,6 +305,8 @@ export default defineComponent({
         ...mapActions(useLcStore, ['getLcs']),
         downloadHandler(id: any) {
             this.loadingDownload = true
+            this.response = ''
+            this.errorText = ''
             this.receiptsArr?.map((t: any) => {
                 t?.data?.id === id ? t.loading = true : t.loading = false
             });
@@ -321,7 +327,13 @@ export default defineComponent({
         },
         downloadAllHandler() {
             this.loadingDownloadAll = true
-            this.downloadAllReceipts({ document_ids: this.lcs }).then(() => {
+            let ids:any = []
+            this.receipts.forEach((el: any,) => {
+                ids.push(el?.id)
+            })
+            this.response = ''
+            this.errorText = ''
+            this.downloadAllReceipts({ document_ids: ids }).then(() => {
                 this.loadingDownloadAll = false
                 if (this.$pinia.state.value?.receipt?.downloadAllResponse?.status == true) {
                     window.open(this.$pinia.state.value?.receipt?.downloadAllResponse?.data, '_system')
@@ -332,9 +344,14 @@ export default defineComponent({
             })
         },
         sendAllReceiptsHandler() {
-
+            let ids:any = []
+            this.receipts.forEach((el: any,) => {
+                ids.push(el?.id)
+            })
+            this.response = ''
+            this.errorText = ''
             this.loadingSendAll = true
-            this.sendAllReceiptsToEmail({ document_ids: this.lcs }).then(() => {
+            this.sendAllReceiptsToEmail({ document_ids: ids }).then(() => {
                 this.loadingSendAll = false
                 if (this.$pinia.state.value?.receipt?.sendAllResponse?.status == false) {
                     this.errorText = this.$pinia.state.value?.receipt?.sendAllResponse?.data
@@ -424,11 +441,14 @@ export default defineComponent({
             this.errorText2 = ''
             if (e.length > 1) {
                 this.docType2 = true
-                this.lcs = []
+                this.lcsMob = []
                 this.$pinia.state.value.lc?.lcResponse?.data?.lcs.forEach((el: any, index: any) => {
-                    
-                    this.lcs.push({ lc: el, current: false })
+
+                    this.lcsMob.push({ lc: el, current: false })
                 });
+            } else {
+                this.docType2 = false
+
             }
             if (e == '1' || e == 'Квитанция') {
                 this.docType = 'Квитанция'
@@ -549,7 +569,7 @@ export default defineComponent({
                 console.log(selected, 'извещения')
             }
 
-            this.lcs?.map((t: any) => {
+            this.lcsMob?.map((t: any) => {
                 t?.lc?.lc_number === selected ? t.current = true : t.current = false
             });
         },

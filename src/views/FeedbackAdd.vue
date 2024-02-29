@@ -35,13 +35,17 @@
                 </ion-text>
                 <div class="card">
                     <div class="card-list">
-                        <div class="card-line">
+                        <!-- <div class="card-line">
                             <p class="name">Лицевой счет</p>
                             <p class="value">№ 12345678901</p>
-                        </div>
+                        </div> -->
                         <div class="card-line">
                             <p class="name">ФИО</p>
-                            <p class="value">Иванов Иван Иванович</p>
+                            <p class="value">
+                                {{ userData?.lastname }}
+                                {{ userData?.name }}
+                                {{ userData?.secondname }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -79,8 +83,9 @@
                 </div>
 
                 <div class="file">
-                    <p :class="file[0]?.name && 'black'">{{ file[0]?.name || 'Прикрепить файл' }}</p>
-                    <input @change="(e) => file = e.target?.files" id="files" class="input" type="file" required />
+                    <p v-show="file.length > 0" :class="file[0]?.name && 'black'" v-for="el in file">{{ el?.name }}</p>
+                    <p v-show="file.length == 0"> 'Прикрепить файл' </p>
+                    <input @change="(e) => setFile(e)" id="files" class="input" type="file" required />
                     <label v-show="file[0]?.name ? true : false" for="files2"><img @click="file = []"
                             src="../assets/close.svg" alt="file"></label>
 
@@ -147,13 +152,14 @@ export default defineComponent({
         createTicketHandler() {
             this.errorText = ''
             this.response = ''
-            this.loading = true
             let data = {
                 message: this.text,
                 category_id: Number(this.category),
+                files: this.file[0]
             }
-            console.log(data, this.checked)
             if (this.text.length > 0 && this.category !== '0' && this.checked.length > 0) {
+                this.loading = true
+
                 this.createTicket(data).then(() => {
                     this.loading = false
                     if (this.$pinia.state.value.appeals?.createResponse?.status == true) {
@@ -170,6 +176,7 @@ export default defineComponent({
         },
         setFile(e: any) {
             this.$data.file = e.target.files
+            console.log(e.target.files)
         },
         passToggle(el: any) {
             if (el == 'passOld') {
@@ -204,7 +211,12 @@ export default defineComponent({
     ionViewDidLeave() {
         this.errorText = ''
         this.response = ''
-    }
+    },
+    computed: {
+        userData() {
+            return this.$pinia.state.value?.login?.userResponse?.data
+        }
+    },
 })
 </script>
   

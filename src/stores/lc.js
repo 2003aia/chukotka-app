@@ -13,6 +13,7 @@ export const useLcStore = defineStore({
         invoicesResponse: null,
         invoicesError: null,
         lcResponse: null,
+        lcsMod: [],
         lcError: null,
         lcInfoResponse: null,
         lcInfoError: null,
@@ -31,7 +32,7 @@ export const useLcStore = defineStore({
     },
     actions: {
         async getLcs() {
-
+            this.lcsMod = []
             const store = new Storage();
             await store.create();
             let token = await store.get("token");
