@@ -26,11 +26,11 @@
           <label>Отчество</label>
         </div>
         <div class="input-wrapper">
-          <input :value="email" v-on:change="(e: any) => email = e.target.value" class="input" :class="[errorText && 'error']" required />
+          <input type="email" :value="email" v-on:change="(e: any) => email = e.target.value" class="input" :class="[errorText && 'error']" required />
           <label>E-mail</label>
         </div>
         <div class="input-wrapper">
-          <input :value="tel" v-on:change="(e: any) => tel = e.target.value" class="input" :class="[errorText && 'error']" required />
+          <input v-mask="'+7 (###) ###-##-##'" :value="tel" v-on:change="(e: any) => tel = e.target.value" class="input" :class="[errorText && 'error']" required />
           <label>Телефон</label>
         </div>
         <div class="input-wrapper">
@@ -60,9 +60,6 @@
         </div>
         <p class="errorText" v-show="errorText">{{ errorText }}</p>
       </div>
-
-    </ion-content>
-    <ion-footer class="ion-no-border">
       <div class="btns container">
         <button class="btn" @click="registrUserHandler">
           <div class="spinner" v-show="loading">
@@ -73,7 +70,10 @@
           </span>
         </button>
       </div>
-    </ion-footer>
+    </ion-content>
+    <!-- <ion-footer class="ion-no-border">
+      
+    </ion-footer> -->
   </ion-page>
 </template>
   
@@ -83,12 +83,14 @@ import { IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFoote
 import { defineComponent } from 'vue';
 import { mapActions } from 'pinia';
 import { useLoginStore } from '../stores/login'
+import {mask} from 'vue-the-mask'
 
 export default defineComponent({
   name: 'Registration',
   components: {
     IonPage, IonContent, IonItem, IonButton, IonCheckbox, IonText, IonFooter, IonSpinner
   },
+  directives: {mask},
   data() {
     return {
       pass: false,

@@ -23,7 +23,8 @@
                     <p class="title-profile">ФИО</p>
                 </ion-text>
                 <div class="input-wrapper">
-                    <input class="input" required :value="lastname" v-on:change="(e: any) => lastname = e.target.value" />
+                    <input class="input" required :value="lastname"
+                        v-on:change="(e: any) => lastname = e.target.value" />
                     <label>Фамилия</label>
                     <img src="../assets/pen.svg" alt="pen">
                 </div>
@@ -61,7 +62,8 @@
                     <img src="../assets/pen.svg" alt="pen">
                 </div>
                 <ion-text>
-                    <p>Для изменения необходимо подтвердить электронный адрес, мы отправили письмо на указанную вами почту
+                    <p>Для изменения необходимо подтвердить электронный адрес, мы отправили письмо на указанную вами
+                        почту
                     </p>
                 </ion-text>
             </div>
@@ -76,7 +78,8 @@
                     <img src="../assets/pen.svg" alt="pen">
                 </div>
                 <ion-text>
-                    <p>Для изменения необходимо подтвердить данные, мы отправили SMS на указанный вами номер телефона</p>
+                    <p>Для изменения необходимо подтвердить данные, мы отправили SMS на указанный вами номер телефона
+                    </p>
                 </ion-text>
 
             </div>
@@ -129,9 +132,7 @@
                 </ion-text>
 
             </div>
-        </ion-content>
-        <ion-footer class="ion-no-border">
-            <div class="container">
+            <div class="container" style='margin-top: 60px;'>
                 <p class="response">{{ response }}</p>
                 <p class="errorText">{{ errorText }}</p>
 
@@ -145,12 +146,13 @@
                 </button>
 
             </div>
-        </ion-footer>
+        </ion-content>
+
     </ion-page>
 </template>
-  
+
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,IonSpinner } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonFooter, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { mapActions } from 'pinia';
 import { useLoginStore } from '../stores/login'
@@ -184,56 +186,63 @@ export default defineComponent({
     methods: {
         ...mapActions(useLoginStore, ['editUser', 'editPassword']),
         editUserHandler() {
-            if (this.$route.query?.link == 'password') {
-                console.log('password')
+            if (this.passwordNew.length >= 6) {
 
-                if (this.passwordNew === this.passwordConfirm) {
-                    this.loading = true
-                    this.errorText = ''
+                if (this.$route.query?.link == 'password') {
+                    console.log('password')
+
+                    if (this.passwordNew === this.passwordConfirm) {
+                        this.loading = true
+                        this.errorText = ''
+
+                        let data = {
+                            password: this.passwordOld,
+                            new_password: this.passwordNew,
+                            password_confirm: this.passwordConfirm,
+                        }
+                        this.editPassword(data).then(() => {
+                            this.loading = false
+                            if (this.$pinia.state.value.login?.changePassResponse?.status == true) {
+                                this.response = this.$pinia.state.value.login?.changePassResponse?.data
+                            } else {
+                                this.errorText = this.$pinia.state.value.login?.changePassResponse?.data
+                            }
+
+                        })
+                    } else {
+                        this.errorText = 'Пароли не совпадают'
+
+                    }
+
+                } else {
 
                     let data = {
-                        password: this.passwordOld,
-                        new_password: this.passwordNew,
-                        password_confirm: this.passwordConfirm,
+                        name: this.name,
+                        lastname: this.lastname,
+                        secondname: this.secondname,
+                        email: this.email,
+                        phone: this.phone,
+
                     }
-                    this.editPassword(data).then(() => {
+                    this.loading = true
+
+                    this.editUser(data).then(() => {
                         this.loading = false
-                        if (this.$pinia.state.value.login?.changePassResponse?.status == true) {
-                            this.response = this.$pinia.state.value.login?.changePassResponse?.data
+
+                        if (this.$pinia.state.value.login?.userResponse?.status == true) {
+                            this.response = this.$pinia.state.value.login?.userResponse?.data
+
                         } else {
-                            this.errorText = this.$pinia.state.value.login?.changePassResponse?.data
+                            this.errorText = this.$pinia.state.value.login?.userResponse?.data
                         }
-
+                        console.log(this.$pinia.state.value.login?.userResponse)
                     })
-                } else {
-                    this.errorText = 'Пароли не совпадают'
-
                 }
-
             } else {
+                this.errorText = 'Пароль должен содержать не менее 6 символов'
 
-                let data = {
-                    name: this.name,
-                    lastname: this.lastname,
-                    secondname: this.secondname,
-                    email: this.email,
-                    phone: this.phone,
-
-                }
-                this.loading = true
-
-                this.editUser(data).then(() => {
-                    this.loading = false
-
-                    if (this.$pinia.state.value.login?.userResponse?.status == true) {
-                        this.response = this.$pinia.state.value.login?.userResponse?.data
-
-                    } else {
-                        this.errorText = this.$pinia.state.value.login?.userResponse?.data
-                    }
-                    console.log(this.$pinia.state.value.login?.userResponse)
-                })
             }
+
         },
         passToggle(el: any) {
             if (el == 'passOld') {
@@ -290,8 +299,8 @@ export default defineComponent({
     }
 })
 </script>
-  
-  
+
+
 <style scoped>
 .title-profile {
     font-size: 16px;
@@ -308,4 +317,3 @@ export default defineComponent({
     margin-bottom: 0;
 }
 </style>
-  

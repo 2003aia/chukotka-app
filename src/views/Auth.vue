@@ -13,7 +13,7 @@
         </div>
 
         <div class="input-wrapper">
-          <input :value="password" v-on:change="(e) => password = e.target.value" class="input"
+          <input minlength="6" maxlength="12" :value="password" v-on:change="(e) => password = e.target.value" class="input"
             :class="[errorText && 'error']" ref="passAuth" required type="password" />
           <label>Пароль</label>
           <div @click="passToggle">
@@ -25,9 +25,6 @@
           Забыли пароль?
         </button>
       </div>
-    </ion-content>
-    <ion-footer class="ion-no-border">
-
       <div class="btns container">
         <p class="errorText">{{ errorText }}</p>
 
@@ -42,7 +39,8 @@
         <button class="btn-clear" @click="$router.push('/reg')">Зарегистрироваться</button>
 
       </div>
-    </ion-footer>
+    </ion-content>
+    
   </ion-page>
 </template>
   
@@ -70,17 +68,20 @@ export default defineComponent({
     this.errorText = ''
   },
   methods: {
-    ...mapActions(useLoginStore, ["authUser",]),
+    ...mapActions(useLoginStore, ["authUser","getUser"]),
     authUserHandler(login: any, password: any) {
       if (login.length > 0 && password.length > 0) {
 
         this.loadingAuth = true
         this.authUser(login, password).then(() => {
           this.loadingAuth = false
+          this.password = ''
+
           if (this.$pinia.state.value?.login.authResponse?.status == true) {
             this.$router.push('/tabs')
+            this.getUser()
           } else {
-            this.errorText = this.$pinia.state.value?.login.authResponse?.data
+            this.errorText = 'Неверный пароль или логин'/* this.$pinia.state.value?.login.authResponse?.data */
           }
           console.log('authUser response:', this.$pinia.state.value?.login.authResponse)
         })

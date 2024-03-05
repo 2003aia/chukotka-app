@@ -244,6 +244,7 @@ ion-item {
     border: none;
     border-bottom: 1px solid #ABA8A8;
     font-size: 14px;
+    background: #fff;
 }
 
 .input.error {
@@ -302,6 +303,25 @@ input:valid~label {
     color: #ABA8A8;
 }
 
+
+.input-wrapper textarea:focus~label,
+input:valid~label {
+    font-size: 12px;
+    color: #005D9F;
+    top: 0px;
+    left: 0px;
+    padding: 0px 0px 20px 0px;
+}
+
+
+.input-wrapper textarea:not(:focus):valid~label {
+    color: #ABA8A8;
+}
+
+.input-wrapper textarea:focus {
+    border-bottom: 1px solid #005D9F;
+    caret-color: #005D9F;
+}
 /* .input-wrapper input:valid+label {
     font-size: 12px;
     color: #005D9F;
@@ -593,6 +613,32 @@ ion-title {
     opacity: 0;
 }
 
+.select .ion-accordion-toggle-icon{
+    margin-top: 20px;
+}
+
+.select .label {
+    font-size: 14px;
+    color: #ABA8A8;
+    padding: 30px 0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    transition: 0.2s ease-in-out all;
+    -moz-transition: 0.2s ease-in-out all;
+    -webkit-transition: 0.2s ease-in-out all;
+    pointer-events: none;
+    opacity: 0;
+}
+.open.select .label {
+    font-size: 12px;
+    color: #005D9F;
+    top: 0px;
+    left: 0px;
+    opacity: initial;
+    padding: 0px 0px 0px 0px;
+}
+
 .custom-select[open] .label {
     font-size: 12px;
     color: #005D9F;
@@ -808,4 +854,16 @@ ion-spinner {
     --color:
         /*#fff #005D9F */
     ;
+}
+
+
+body:not(.justwidget-iframe--content) .justwidget--asst-pic{
+    width: 40px;
+    height: 40px;
+}
+.justwidget--asst-pic-waves{
+    border: 25px solid var(--header-background-color);
+}
+.justwidget.mobile_right .justwidget--asst{
+    bottom: 40px;
 }

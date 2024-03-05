@@ -27,10 +27,7 @@
             v-on:keyup="(e) => clickEvent(e, 'first')" placeholder="1" maxlength="1" type="text" class="input">
         </div>
       </div>
-
-    </ion-content>
-    <ion-footer class="ion-no-border">
-      <div class="btns container">
+      <div class="btns container" style="margin-top: 100px;">
         <p class="errorText" v-show="errorText">{{ errorText }}</p>
         <p class="response" v-show="response">{{ response }}</p>
         <button class="btn" @click="confirmHandler">
@@ -42,7 +39,8 @@
           </span>
         </button>
       </div>
-    </ion-footer>
+    </ion-content>
+    
   </ion-page>
 </template>
   

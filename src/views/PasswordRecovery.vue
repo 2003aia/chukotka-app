@@ -18,7 +18,7 @@
 
         </ion-text>
         <div class="input-wrapper" v-show="changeShow == false">
-          <input :value="email" v-on:change="(e: any) => email = e.target.value" class="input" required />
+          <input type="email" :value="email" v-on:change="(e: any) => email = e.target.value" class="input" required />
           <label>E-mail</label>
         </div>
         <div class="input-wrapper" v-show="changeShow == false">
@@ -51,10 +51,6 @@
         </div>
 
       </div>
-
-    </ion-content>
-
-    <ion-footer class="ion-no-border">
       <div class="btns container">
         <p class="response">{{ response }}</p>
         <button v-show="changeShow == false" class="btn" @click="passwordRecoveryHandler">
@@ -74,8 +70,9 @@
           </span>
         </button>
       </div>
+    </ion-content>
 
-    </ion-footer>
+   
   </ion-page>
 </template>
   

@@ -50,12 +50,42 @@
                     </div>
                 </div>
 
-                <details class="custom-select" :class="[errorText && 'error']">
+                <ion-accordion-group ref="feedback" @ionChange="accordionGroupChange($event)">
+                    <ion-accordion value="first">
+                        <ion-item class="select" :class="[open && 'open']" slot="header">
+                            <div class="select-wrapper">
+                                <label class="label">Выберите тему обращения</label>
+                                <div v-if="category == null" class="select-placeholder">
+                                    Выберите тему обращения
+                                </div>
+
+                                <div v-else class="select-value">
+                                    {{ category?.name }}
+                                </div>
+
+                            </div>
+
+                        </ion-item>
+                        <div slot="content" class="select-content">
+                            <div class="select-item" @click="setSelect({ id: 1, name: 'Личный кабинет' })">
+                                Личный кабинет
+                            </div>
+                            <div class="select-item" @click="setSelect({ id: 2, name: 'Жалоба' })">
+                                Жалоба
+                            </div>
+                            <div class="select-item" @click="setSelect({ id: 3, name: 'Вопрос' })">
+                                Вопрос
+                            </div>
+                        </div>
+                    </ion-accordion>
+                </ion-accordion-group>
+
+               <!--  <details ref="summ" class="custom-select" :class="[errorText && 'error']">
                     <summary class="radios">
                         <label class="label">Выберите тему обращения</label>
 
-                        <input class="placeholder" value="0" v-model.number="category" type="radio" name="item" id="default"
-                            title="Выберите тему обращения" checked>
+                        <input class="placeholder" value="0" v-model.number="category" type="radio" name="item"
+                            id="default" title="Выберите тему обращения" checked>
                         <input type="radio" value="1" v-model.number="category" name="item" id="item1"
                             title="Личный кабинет">
                         <input type="radio" value="2" v-model.number="category" name="item" id="item2" title="Жалоба">
@@ -76,16 +106,16 @@
 
 
                     </ul>
-                </details>
-                <div class="input-wrapper">
-                    <input v-model="text" :class="[errorText && 'error']" class="input" type="text" required />
-                    <label>Сообщение</label>
+                </details> -->
+                <div class="input-wrapper" style="margin-top: 20px;">
+                    <textarea v-model="text" :class="[errorText && 'error']" class="input" type="text" required></textarea>
+                    <label style="padding:0;">Сообщение</label>
                 </div>
 
                 <div class="file">
                     <p v-show="file.length > 0" :class="file[0]?.name && 'black'" v-for="el in file">{{ el?.name }}</p>
                     <p v-show="file.length == 0"> 'Прикрепить файл' </p>
-                    <input @change="(e) => setFile(e)" id="files" class="input" type="file" required />
+                    <input @change="(e) => setFile(e)" id="files" class="input" type="file" required accept=".pdf,.doc,.jpg,.png,.xls, .xlsx"/>
                     <label v-show="file[0]?.name ? true : false" for="files2"><img @click="file = []"
                             src="../assets/close.svg" alt="file"></label>
 
@@ -120,17 +150,18 @@
 
     </ion-page>
 </template>
-  
+
 <script lang="ts">
-import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner } from '@ionic/vue';
+import { IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner, IonAccordionGroup, IonAccordion, IonItem } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { useAppealsStore } from '../stores/appeals'
 import { mapActions } from 'pinia'
 
+
 export default defineComponent({
     name: 'FeedbackAdd',
     components: {
-        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner
+        IonPage, IonContent, IonText, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonSpinner, IonAccordionGroup, IonAccordion, IonItem
     },
     data() {
         return {
@@ -140,30 +171,41 @@ export default defineComponent({
             },
             file: [],
             loading: false,
-            category: '',
+            category: null,
             text: '',
             errorText: '',
             response: '',
-            checked: ''
+            checked: '',
+            open: false,
         }
     },
     methods: {
         ...mapActions(useAppealsStore, ['createTicket']),
+        setSelect(v: any) {
+            this.category = v
+            this.$refs.feedback.$el.value = undefined;
+        },
+        accordionGroupChange(ev: any) {
+
+            console.log(ev.detail.value);
+            this.open = ev.detail.value == undefined ? false : true
+        },
         createTicketHandler() {
             this.errorText = ''
             this.response = ''
             let data = {
                 message: this.text,
-                category_id: Number(this.category),
+                category_id: Number(this.category?.id),
                 files: this.file[0]
             }
-            if (this.text.length > 0 && this.category !== '0' && this.checked.length > 0) {
+            if (this.text.length > 0 && this.category != null && this.checked.length > 0) {
                 this.loading = true
 
                 this.createTicket(data).then(() => {
                     this.loading = false
                     if (this.$pinia.state.value.appeals?.createResponse?.status == true) {
-                        this.response = this.$pinia.state.value.appeals?.createResponse?.data
+                        this.response = 'Отправлено!'/* this.$pinia.state.value.appeals?.createResponse?.data */
+
 
                     } else {
                         this.errorText = this.$pinia.state.value.appeals?.createResponse?.data
@@ -206,7 +248,7 @@ export default defineComponent({
     },
     mounted() {
         console.log(this.$route.query, 'test')
-        this.category = ''
+        this.category = null
     },
     ionViewDidLeave() {
         this.errorText = ''
@@ -219,11 +261,37 @@ export default defineComponent({
     },
 })
 </script>
-  
-  
+
+
 <style scoped>
 .radio {
     margin-bottom: 30px;
+}
+.input-wrapper textarea{
+    padding: 0px 0 30px 0;
+    margin-top: 30px;
+}
+
+.select {
+    border-bottom: 1px solid #ABA8A8;
+    --padding-end: 0;
+    --inner-padding-end: 0;
+}
+.select-wrapper{
+    padding: 30px 0 20px 0;
+}
+.select-placeholder {
+    font-size: 14px;
+    color: #ABA8A8;
+}
+
+.select-content {
+    border-bottom: 1px solid #ABA8A8;
+    padding-top: 15px;
+}
+
+.select-item {
+    padding-bottom: 15px;
 }
 
 .file {
@@ -289,4 +357,3 @@ ion-fab-button {
     margin-bottom: 0;
 }
 </style>
-  
